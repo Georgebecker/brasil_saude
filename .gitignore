@@ -35,3 +35,16 @@ logs/
 .idea/
 .DS_Store
 Thumbs.db
+
+# ---- Qualidade e cobertura ----
+.coverage
+coverage.xml
+htmlcov/
+.ruff_cache/
+
+# ---- Front-end (caso use Node) ----
+node_modules/
+
+# ---- Relatórios gerados pelo agente do Loop ----
+meu-loop-agente/outputs/*
+!meu-loop-agente/outputs/.gitkeep

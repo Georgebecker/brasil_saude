@@ -1,0 +1,48 @@
+{
+  "versao": 1,
+  "observacao": "Regua do Loop: quais indicadores o painel deve publicar. Arquivo do humano; o agente nunca edita. Cada indicador vale 4 itens na metrica (publicado, fonte, periodo, validado).",
+  "indicadores": [
+    {
+      "id": "mortalidade_infantil",
+      "nome": "Taxa de mortalidade infantil",
+      "unidade": "por 1.000 nascidos vivos",
+      "fonte_esperada": "DATASUS/SIM",
+      "periodicidade": "anual"
+    },
+    {
+      "id": "cobertura_vacinal",
+      "nome": "Cobertura vacinal",
+      "unidade": "%",
+      "fonte_esperada": "DATASUS/PNI",
+      "periodicidade": "anual"
+    },
+    {
+      "id": "internacoes_evitaveis",
+      "nome": "Internacoes por condicoes sensiveis a atencao primaria",
+      "unidade": "%",
+      "fonte_esperada": "DATASUS/SIH",
+      "periodicidade": "anual"
+    },
+    {
+      "id": "leitos_sus",
+      "nome": "Leitos SUS por 1.000 habitantes",
+      "unidade": "por 1.000 habitantes",
+      "fonte_esperada": "DATASUS/CNES",
+      "periodicidade": "mensal"
+    },
+    {
+      "id": "gasto_saude",
+      "nome": "Gasto publico em saude per capita",
+      "unidade": "R$ por habitante",
+      "fonte_esperada": "SIOPS",
+      "periodicidade": "anual"
+    },
+    {
+      "id": "agravos_notificados",
+      "nome": "Agravos de notificacao compulsoria",
+      "unidade": "casos",
+      "fonte_esperada": "DATASUS/SINAN",
+      "periodicidade": "semanal"
+    }
+  ]
+}

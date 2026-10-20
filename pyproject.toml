@@ -1,0 +1,14 @@
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+# meu-loop-agente/ e a ferramenta de medicao: o agente do Loop nao pode edita-la,
+# entao um erro de lint ali bloquearia todos os ciclos para sempre.
+extend-exclude = [".venv", "meu-loop-agente", "data", "notebooks", "frontend"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

@@ -1,105 +1,119 @@
 # Brasil Saúde
 
-**Aqui vive um agente de Loop Engineering** (DeepSeek Flash): ele melhora sistemas em
-**ciclos contínuos e verificáveis** — lê o objetivo, propõe UMA mudança pequena, testa,
-mede, decide (mantém ou reverte) e registra. Sem intervenção humana a cada passo.
+![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-green)
+![Status](https://img.shields.io/badge/status-rascunho%20(em%20constru%C3%A7%C3%A3o)-orange)
 
-Este repositório **é o modelo em si** — o Loop Engineer completo (contrato, regras de ouro,
-ferramentas de verificação e agente), pronto para receber um sistema alvo e rodar ciclos.
+Este repositório prepara um **painel público de vigilância e responsabilização em saúde**:
+todo número publicado precisa dizer de onde veio, a que período se refere e quando foi
+validado. A pergunta que o painel responde é simples — *o que está acontecendo na saúde
+do Brasil, e quem responde por isso?* — mas a resposta só vale se for rastreável.
 
----
+## Classificação
 
-**Autor:** George Herman Becker
-**Gestão em Tecnologia da Informação**
+| Dimensão | Valor |
+|----------|-------|
+| **Propósito** | `estudo` · `utilidade` |
+| **Maturidade** | `rascunho` |
+| **O que estou treinando** | dados públicos de saúde, rastreabilidade de fontes, painel web, Loop Engineering |
+| **Quem usaria** | conselhos de saúde, gestores municipais, jornalistas de dados, cidadãos |
 
+> A maturidade é `rascunho` de propósito: este é o **ambiente preparado**. Coleta, banco,
+> API e interface entram nos próximos ciclos, com evidência no [`log_loop.md`](log_loop.md).
 
-**Apoie o autor:**
+## Metodologia Loop
+
+Este projeto nasce do repositório base [`projeto_loop`](https://github.com/Georgebecker/projeto_loop)
+e é desenvolvido com **Loop Engineering**: uma hipótese pequena por ciclo → mudança →
+teste → métrica real → decisão **ACEITO** (fica) ou **REJEITADO** (reverte).
+
+*Este projeto não foi feito no "achismo". Cada decisão foi medida e testada.* O histórico
+fica em [`log_loop.md`](log_loop.md) e o detalhe por iteração em
+[`meu-loop-agente/log.md`](meu-loop-agente/log.md).
+
+## O que tem aqui
+
+Ambiente pronto — sem painel inventado:
+
+- `meu-loop-agente/` — contrato (`program.md`), régua de indicadores, medidor, verificador e log do Loop.
+- `src/` — configuração central do projeto (`src/config.py`).
+- `tests/` — suíte que protege a base, os segredos e o formato da métrica.
+- `sql/`, `data/{raw,processed,descartados}`, `notebooks/` — fluxo bruto → validado → usado.
+- `.githooks/` — bloqueiam `.env` e chave no commit **e** no envio ao remoto.
+- `docs/REGRAS_DE_OURO.md` — o contrato de método (dados, processo, técnica e Loop).
+- `.github/workflows/ci.yml` — lint e testes em cada push.
+
+```
+brasil_saude/
+├── meu-loop-agente/     # o cérebro do Loop (contrato, régua, medidor, verificador)
+├── src/                 # código do painel (cresce nos próximos ciclos)
+├── tests/               # testes automatizados
+├── sql/                 # esquema e consultas
+├── data/{raw,processed,descartados}
+├── docs/                # regras de ouro e origem da base
+└── scripts/             # utilitários de linha de comando
+```
+
+## Como rodar
+
+Requisitos: Python 3.10+ (testado no 3.14) e Git.
+
+```powershell
+cd D:\Projetos\brasil_saude
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+> Repositório ainda local (sem remoto publicado). Quando for a hora de publicar:
+> `gh repo create brasil_saude --private --source=. --remote=origin --push`.
+
+Verificação do ambiente e do Loop:
+
+```powershell
+python -m pytest -q                        # testes do ambiente
+python -m ruff check .                     # estilo e erros óbvios
+python meu-loop-agente/verificar_iteracao.py estado
+python meu-loop-agente/medir_qualidade.py --detalhe
+```
+
+O `.env` é local e nunca vai ao git; o modelo versionado é `.env.example`.
+
+## 🚀 Convite à interação
+
+**Iniciantes:** este repositório é um bom lugar para o primeiro Pull Request. As tarefas
+marcadas com `good first issue` são pequenas de propósito — melhorar uma mensagem de erro,
+escrever um teste, corrigir uma explicação. Eu reviso e ajudo; errar faz parte.
+
+**Colegas de programação e dados:** abra uma Issue ou PR se encontrar gargalo, brecha de
+segurança, número sem fonte ou dúvida de modelagem. Discussão técnica é bem-vinda, inclusive
+quando discorda de uma decisão registrada.
+
+**Recrutadores e visitantes:** não é tutorial copiado. É um projeto real, com histórico de
+decisões, testes e um agente que mede o próprio avanço. O código está em [`src/`](src) e o
+raciocínio em [`log_loop.md`](log_loop.md).
+
+## Transparência e limitações
+
+- **Sem dados ainda:** o painel não publica nenhum indicador; a dívida de rastreabilidade
+  começa em 100%. Nada de número inventado para "encher" a tela.
+- **Ambiente local:** sem deploy, sem autenticação e sem banco compartilhado.
+- **Régua inicial:** os seis indicadores em `meu-loop-agente/referencias_indicadores.json`
+  são ponto de partida; o dono do projeto ajusta a lista.
+- **Dados públicos mudam de formato:** cada fonte precisa de coletor e de teste de
+  contrato antes de entrar no painel.
+- **Capturas de tela:** pendentes — a interface ainda não existe (ambiente sem tela).
+
+## Apoio
+
+Se este trabalho te ajudar, o autor agradece (sem compromisso):
+
 - **PIX:** `a8b68e14-edfe-4450-88f2-c2af4aca2a6c`
 - **Buy Me a Coffee:** <https://buymeacoffee.com/georgehbecker>
 - **LinkedIn:** <https://www.linkedin.com/in/georgehbecker/>
 
----
+## Topics sugeridos
 
-## Loop Engineering — o coração do projeto
-
-Um agente opera em ciclos: lê o contrato (`program.md`), propõe **UMA** hipótese pequena,
-aplica a mudança, roda a verificação, **mede a métrica principal** e decide —
-**ACEITO** (mantém e atualiza a linha de base) ou **REJEITADO** (reverte na hora) —
-registrando tudo no log. O ciclo repete até a meta, dentro de limites definidos.
-
-**Um ciclo de verdade, do começo ao fim (exemplo):**
-
+```text
+python fastapi sqlite dados-publicos saude-sus data-quality loop-engineering transparencia
 ```
-Iteração 1
-- Hipótese: trocar a biblioteca moment.js por date-fns
-- Arquivos: workspace/lib/date.ts, workspace/package.json
-- Métrica antes: 312 kB  →  depois: 298 kB  (melhoria de 4,49%)
-- Comandos de verificação: todos passaram
-- Decisão: ACEITO — a linha de base vira 298 kB; o próximo ciclo parte daqui
-
-Iteração 2
-- Hipótese: remover um import não utilizado de lodash
-- Métrica antes: 298 kB  →  depois: 298 kB  (não melhorou)
-- Decisão: REJEITADO — a mudança é revertida e nada entra na linha de base
-```
-
-**As vantagens na prática:**
-
-- **Melhoria medida, não "achada":** cada iteração tem número antes/depois; o que não melhora é revertido.
-- **Zero regressão silenciosa:** a linha de base só avança quando a métrica melhora de verdade.
-- **Rede de segurança total:** hipótese pequena + ponto de retorno antes de cada ciclo — reverter é um comando só.
-- **Decisão objetiva:** critérios de aceite/rejeição escritos no contrato — não é opinião nem promessa da IA.
-- **Conhecimento que não se perde:** o `log.md` guarda cada tentativa (hipótese, arquivos, métricas, decisão).
-- **Autonomia sem risco:** o agente só mexe no que o contrato permite (dentro de `workspace/`); o resto é proibido e bloqueado.
-- **Ganho acumulado:** melhorias aceitas se somam — o avanço compõe a cada ciclo.
-- **Custo controlado:** limites de parada (meta, iterações, rejeições seguidas) e temperatura baixa (consistência).
-- **Um contrato, dois "cérebros":** funciona hoje com o agente do chat e amanhã com o runner autônomo (API DeepSeek).
-
-**Onde está:** `meu-loop-agente/` — contrato (`program.md`), configuração de máquina
-(`config_loop.json`), linha de base (`baseline.json`), log (`log.md`), comportamento do
-agente (`system_prompt.md`) e o verificador (`verificar_iteracao.py`).
-Guia de uso: [`meu-loop-agente/README.md`](meu-loop-agente/README.md).
-
----
-
-## O que tem aqui (por enquanto)
-
-- `docs/REGRAS_DE_OURO.md` — as melhores regras, sintetizadas, para todo projeto de dados (Python + SQL + arquitetura moderna).
-- `meu-loop-agente/` — **o coração do projeto:** o agente de Loop Engineering (contrato, métrica, log e verificador para ciclos de melhoria contínua; ele só mexe em `meu-loop-agente/workspace/`).
-- `.env` / `.env.example` — configuração pronta (caminhos, banco de dados, APIs), sem segredo no repositório.
-- `.githooks/` — ganchos de proteção do git: bloqueiam o `.env` no commit **e** no envio ao remoto (ativar em um clone novo: `git config core.hooksPath .githooks` ou `.githooks\instalar.ps1`).
-- Pastas-base prontas para crescer: `data/raw`, `data/processed`, `data/descartados`, `notebooks`.
-
-## Estrutura prevista (vai evoluir com o projeto)
-
-```
-brasil_saude/
-├── .env / .env.example        # configuração (nunca commitar o .env)
-├── .githooks/                 # ganchos de proteção (bloqueiam .env no commit e no envio)
-├── README.md                  # este arquivo
-├── docs/                      # documentação e regras de ouro
-├── meu-loop-agente/           # agente de Loop Engineering (contrato, log, workspace, verificador)
-├── data/
-│   ├── raw/                   # dados brutos (nunca alterar)
-│   ├── processed/             # dados tratados/limpos
-│   └── descartados/           # fora de circulação (nunca apagar)
-├── notebooks/                 # análises exploratórias (.ipynb)
-├── src/                       # código reutilizável (cresce depois)
-└── sql/                       # consultas e schemas SQL (cresce depois)
-```
-
-## Requisitos
-
-- **Python 3.8+** — o verificador do agente usa somente a biblioteca padrão (sem dependências externas por enquanto; veja `requirements.txt`).
-- **Git** — com os ganchos de proteção ativos (`git config core.hooksPath .githooks`).
-- **Node.js** — opcional; necessário apenas se o projeto alvo for o exemplo Next.js do `program.md`.
-
-## Comece por aqui
-
-1. Leia [`docs/REGRAS_DE_OURO.md`](docs/REGRAS_DE_OURO.md) — é o contrato do projeto (a **Parte IV** é o guia do agente de Loop Engineering).
-2. Para operar o agente: leia [`meu-loop-agente/README.md`](meu-loop-agente/README.md) — contrato, comandos e como rodar um ciclo.
-3. O `.env` já está criado neste projeto (e nunca vai ao git); em um clone novo, copie `.env.example` para `.env` e ajuste os valores (caminhos, banco, chaves).
-4. Use `data/raw` para o que vier bruto e `data/processed` só para o que for tratado e validado.
-5. Nunca apague dado: se não servir mais, mova para uma pasta de descarte (ex.: `data/descartados/`).
-
----

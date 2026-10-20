@@ -1,112 +1,195 @@
 # Brasil Saúde
 
-![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![Python](https://img.shields.io/badge/python-3.11%2B-blue)
 ![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-green)
-![Status](https://img.shields.io/badge/status-rascunho%20(em%20constru%C3%A7%C3%A3o)-orange)
+![Status](https://img.shields.io/badge/status-funcional%20(local)-brightgreen)
 
-Este repositório prepara um **painel público de vigilância e responsabilização em saúde**:
-todo número publicado precisa dizer de onde veio, a que período se refere e quando foi
-validado. A pergunta que o painel responde é simples — *o que está acontecendo na saúde
-do Brasil, e quem responde por isso?* — mas a resposta só vale se for rastreável.
+Um painel público que responde, com fonte em cada número: **qual a situação da
+dengue no meu estado, isso é anômalo, houve repasse federal e quem responde por
+isso?**
+
+Não é um repositório de scripts. É uma interface que abre no navegador, mostra
+o mapa do Brasil, a série semanal com a faixa esperada pelo EARS, os repasses
+da função Saúde e as condições climáticas dos municípios com maior incidência.
+Todo dado exibido carrega órgão, URL, período e data de coleta.
 
 ## Classificação
 
 | Dimensão | Valor |
 |----------|-------|
-| **Propósito** | `estudo` · `utilidade` |
-| **Maturidade** | `rascunho` |
-| **O que estou treinando** | dados públicos de saúde, rastreabilidade de fontes, painel web, Loop Engineering |
-| **Quem usaria** | conselhos de saúde, gestores municipais, jornalistas de dados, cidadãos |
+| **Propósito** | `utilidade` · `estudo` · `portfólio` |
+| **Maturidade** | `funcional (local)` |
+| **O que estou treinando** | dados públicos de saúde, modelagem, EARS, FastAPI, SQLite, DBA, autorização |
+| **Quem usaria** | conselhos de saúde, jornalistas de dados, gestores municipais/estaduais, pesquisadores |
 
-> A maturidade é `rascunho` de propósito: este é o **ambiente preparado**. Coleta, banco,
-> API e interface entram nos próximos ciclos, com evidência no [`log_loop.md`](log_loop.md).
+> A maturidade é `funcional (local)` porque o painel roda e mostra dado real,
+> mas não está publicado: sem HTTPS, sem deploy e sem autenticação de produção.
 
-## Metodologia Loop
+## Capturas
 
-Este projeto nasce do repositório base [`projeto_loop`](https://github.com/Georgebecker/projeto_loop)
-e é desenvolvido com **Loop Engineering**: uma hipótese pequena por ciclo → mudança →
-teste → métrica real → decisão **ACEITO** (fica) ou **REJEITADO** (reverte).
+![Mapa do Brasil com a incidência de dengue por estado e legenda de cores](docs/img/01-mapa.png)
 
-*Este projeto não foi feito no "achismo". Cada decisão foi medida e testada.* O histórico
-fica em [`log_loop.md`](log_loop.md) e o detalhe por iteração em
-[`meu-loop-agente/log.md`](meu-loop-agente/log.md).
+*Mapa por incidência na última semana consolidada (2026-SE40), com cinza para
+estado sem dado e borda tracejada para anomalia estatística.*
 
-## O que tem aqui
+![Série semanal de casos com faixa esperada e limite do EARS](docs/img/02-serie.png)
 
-Ambiente pronto — sem painel inventado:
+*Ao escolher o estado: casos da semana, faixa esperada, gráfico com observado,
+esperado e limite — e a explicação de que anomalia não é diagnóstico.*
 
-- `meu-loop-agente/` — contrato (`program.md`), régua de indicadores, medidor, verificador e log do Loop.
-- `src/` — configuração central do projeto (`src/config.py`).
-- `tests/` — suíte que protege a base, os segredos e o formato da métrica.
-- `sql/`, `data/{raw,processed,descartados}`, `notebooks/` — fluxo bruto → validado → usado.
-- `.githooks/` — bloqueiam `.env` e chave no commit **e** no envio ao remoto.
-- `docs/REGRAS_DE_OURO.md` — o contrato de método (dados, processo, técnica e Loop).
-- `.github/workflows/ci.yml` — lint e testes em cada push.
+![Gráfico mensal de repasses e lista dos últimos lançamentos](docs/img/03-repasses.png)
 
-```
-brasil_saude/
-├── meu-loop-agente/     # o cérebro do Loop (contrato, régua, medidor, verificador)
-├── src/                 # código do painel (cresce nos próximos ciclos)
-├── tests/               # testes automatizados
-├── sql/                 # esquema e consultas
-├── data/{raw,processed,descartados}
-├── docs/                # regras de ouro e origem da base
-└── scripts/             # utilitários de linha de comando
-```
+*Repasses da função Saúde: soma mensal, últimos lançamentos com link para a
+fonte e aviso de que o painel não afirma causalidade.*
+
+![Lista de municípios com incidência, chuva e responsável estadual](docs/img/04-clima.png)
+
+*Clima nos municípios com maior incidência (chuva de 7 dias) e o responsável
+legal pelo SUS estadual, com link para a fonte.*
+
+![Tabela de fontes com órgão, período, data de coleta e situação](docs/img/05-fontes.png)
+
+*“Fontes e Metodologia” lê o banco: órgão, período, data de coleta e situação
+de cada fonte — sem texto fixo no HTML.*
 
 ## Como rodar
 
-Requisitos: Python 3.10+ (testado no 3.14) e Git.
+Requisitos: Python 3.11+ e Git. O projeto foi testado no Python 3.14/Windows.
 
 ```powershell
 cd D:\Projetos\brasil_saude
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+
+# 1. coleta (IBGE, dengue, capitais, repasses, clima, responsáveis, EARS)
+python scripts/coletar.py tudo
+
+# 2. abra o painel
+python -m uvicorn src.app:app --host 127.0.0.1 --port 8000
+# http://127.0.0.1:8000  ·  API em /api/docs
 ```
 
-> Repositório ainda local (sem remoto publicado). Quando for a hora de publicar:
-> `gh repo create brasil_saude --private --source=. --remote=origin --push`.
-
-Verificação do ambiente e do Loop:
+Verificação:
 
 ```powershell
-python -m pytest -q                        # testes do ambiente
-python -m ruff check .                     # estilo e erros óbvios
-python meu-loop-agente/verificar_iteracao.py estado
-python meu-loop-agente/medir_qualidade.py --detalhe
+python -m pytest -q          # 63 testes
+python -m ruff check .       # lint
+python scripts/backup_sqlite.py criar
+python -m pytest tests/test_backup.py -q
 ```
 
-O `.env` é local e nunca vai ao git; o modelo versionado é `.env.example`.
+## Arquitetura
+
+```
+frontend/ (HTML/CSS/JS, sem build)
+        │  /api/estados, /repasses, /clima, /responsaveis, /fontes
+        ▼
+src/app.py (FastAPI)
+   ├── src/servicos/epidemiologia.py  → série, lacunas, EARS
+   ├── src/servicos/orcamento.py      → repasses por UF
+   ├── src/servicos/clima.py          → incidência + chuva
+   └── src/servicos/…                 → (MDSOA: um serviço por domínio)
+        ▼
+data/brasil_saude.db (SQLite + WAL) ← backup verificado
+```
+
+- **Coleta:** `src/fontes/` (IBGE, InfoDengue, Portal da Transparência, INMET/Open-Meteo).
+- **Proveniência:** tabela `fonte`; caso sem fonte é recusado por chave estrangeira.
+- **Metodologia:** EARS C1/C2 em `src/ears.py`, com exemplo canônico nos testes.
+- **Fase 2 (identidade):** RBAC/ABAC local em `src/auth/` e
+  [`docs/arquitetura/`](docs/arquitetura/README.md).
+
+## Fontes e metodologia
+
+| Dimensão | Fonte | O que entra | Período |
+|---|---|---|---|
+| Território/população | IBGE (localidades e Censo 2022) | 27 UFs, 5.571 municípios | vigente |
+| Dengue | SINAN agregado pelo InfoDengue (Fiocruz) | notificações por UF/semana | últimas 51 semanas |
+| Dengue municipal | InfoDengue `alertcity` | capitais (incidência) | 2 anos |
+| Repasses | Portal da Transparência/SIAFI | função 10 (Saúde), por UF/mês | 12 meses |
+| Estações | INMET | cadastro (nome, UF, coordenadas, IBGE) | vigente |
+| Chuva/temperatura | Open-Meteo (**fallback declarado**) | série diária nas coordenadas da estação | 14 dias |
+| Responsáveis | curadoria com verificação pública | governadores 2023–2027 | mandato |
+
+O EARS compara a semana com a média e o desvio-padrão das **sete semanas
+anteriores** (média + 3 desvios na C1; C2 ignora as duas semanas mais recentes).
+A tela sempre mostra a faixa esperada junto do observado e diz **“anomalia
+estatística”**, nunca “surto”.
+
+## Segurança e Privacidade
+
+**DICA aplicado (COSEGI):**
+
+- **Disponibilidade:** cache local, retry com backoff, fallback de fonte,
+  falha parcial tolerada, backup com restauração testada.
+- **Integridade:** FK obrigatória para `fonte`, `CHECK` de faixa, transação por
+  lote, lacuna marcada como `None` (não zero).
+- **Confidencialidade:** nenhum dado pessoal. A menor célula é município ×
+  semana; não há nome, CPF, CNS, endereço ou e-mail no banco. O protótipo de
+  e-mail guarda UF e papel, **não** destinatário.
+- **Autenticidade:** cada número tem URL da fonte e data de coleta visíveis.
+
+**Superfície:** API somente leitura no painel público; CORS restrito a origens
+locais; corpo limitado a 1 MB; UF validada no servidor; frontend usa
+`textContent` (sem `innerHTML` com dado da rede).
+
+**O que falta para produção:** HTTPS, rate limit, auditoria de acesso, MFA,
+revisão de dependências e teste de intrusão. Está declarado em
+[`docs/dba/seguranca_dados.md`](docs/dba/seguranca_dados.md).
+
+## Fase 2 — identidade, acesso e serviços
+
+Protótipo funcional de autorização com três papéis (`publico`,
+`gestor_estadual`, `admin`). O critério de sucesso é testado: **gestor de SP
+recebe 403 ao pedir dados de RJ**.
+
+- [`docs/arquitetura/matriz_permissoes.md`](docs/arquitetura/matriz_permissoes.md)
+- [`docs/arquitetura/integracao_servicos.md`](docs/arquitetura/integracao_servicos.md)
+  (e-mail multi-tenant, gov.br OIDC, MFA, DATASUS)
+
+```powershell
+$env:BRASIL_SAUDE_AUTH_DEMO = "1"
+# POST /api/auth/demo-token {"papel":"gestor_estadual","uf":"SP"}
+# GET  /api/gestao/estados/SP/resumo   -> 200
+# GET  /api/gestao/estados/RJ/resumo   -> 403
+```
+
+## Limitações declaradas
+
+- **Sem deploy público** e sem HTTPS: roda localmente.
+- **Dengue apenas.** Zika e chikungunya estão no backlog.
+- **Sem microdado restrito.** A série vem agregada; não há acesso ao SINAN
+  nominal (que exigiria Termo, certificado e CNES).
+- **Clima:** a série do INMET exige token (HTTP 204 sem autenticação); os
+  valores vêm do Open-Meteo, e a tela diz isso.
+- **Secretários estaduais de saúde** ainda não são coletados (CONASS carrega a
+  lista via JavaScript sem endpoint estável). O painel mostra o governador e
+  avisa a lacuna.
+- **Sem dado pessoal:** por decisão de projeto, não por falta de vontade.
+
+## Loop Engineering
+
+Cada etapa foi um ciclo: hipótese → mudança → teste → métrica real →
+**ACEITO/REJEITADO** em [`log_loop.md`](log_loop.md). O diário didático está em
+[`DIARIO.md`](DIARIO.md); as decisões, em [`NOTES.md`](NOTES.md); a modelagem,
+em [`docs/modelagem.md`](docs/modelagem.md).
 
 ## 🚀 Convite à interação
 
-**Iniciantes:** este repositório é um bom lugar para o primeiro Pull Request. As tarefas
-marcadas com `good first issue` são pequenas de propósito — melhorar uma mensagem de erro,
-escrever um teste, corrigir uma explicação. Eu reviso e ajudo; errar faz parte.
+**Iniciantes:** há tarefas pequenas e bem delimitadas no
+[`docs/backlog.md`](docs/backlog.md) — melhorar uma mensagem de erro, escrever
+um teste, corrigir uma explicação. Eu reviso e ajudo.
 
-**Colegas de programação e dados:** abra uma Issue ou PR se encontrar gargalo, brecha de
-segurança, número sem fonte ou dúvida de modelagem. Discussão técnica é bem-vinda, inclusive
-quando discorda de uma decisão registrada.
+**Colegas de dados e programação:** encontrou número sem fonte, gargalo ou
+brecha? Abra uma Issue ou PR. Discussão técnica é bem-vinda, inclusive quando
+discorda de uma decisão registrada.
 
-**Recrutadores e visitantes:** não é tutorial copiado. É um projeto real, com histórico de
-decisões, testes e um agente que mede o próprio avanço. O código está em [`src/`](src) e o
-raciocínio em [`log_loop.md`](log_loop.md).
-
-## Transparência e limitações
-
-- **Sem dados ainda:** o painel não publica nenhum indicador; a dívida de rastreabilidade
-  começa em 100%. Nada de número inventado para "encher" a tela.
-- **Ambiente local:** sem deploy, sem autenticação e sem banco compartilhado.
-- **Régua inicial:** os seis indicadores em `meu-loop-agente/referencias_indicadores.json`
-  são ponto de partida; o dono do projeto ajusta a lista.
-- **Dados públicos mudam de formato:** cada fonte precisa de coletor e de teste de
-  contrato antes de entrar no painel.
-- **Capturas de tela:** pendentes — a interface ainda não existe (ambiente sem tela).
+**Recrutadores:** o que está aqui é verificável — suíte de testes, backup
+restaurado, documentação de DBA e um protótipo de autorização que bloqueia
+acesso cruzado entre estados.
 
 ## Apoio
-
-Se este trabalho te ajudar, o autor agradece (sem compromisso):
 
 - **PIX:** `a8b68e14-edfe-4450-88f2-c2af4aca2a6c`
 - **Buy Me a Coffee:** <https://buymeacoffee.com/georgehbecker>
@@ -115,5 +198,5 @@ Se este trabalho te ajudar, o autor agradece (sem compromisso):
 ## Topics sugeridos
 
 ```text
-python fastapi sqlite dados-publicos saude-sus data-quality loop-engineering transparencia
+python fastapi sqlite dados-publicos saude-sus dengue ears datasus lgpd loop-engineering transparencia
 ```

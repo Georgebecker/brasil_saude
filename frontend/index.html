@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Painel público de dengue, repasses federais de saúde e clima, com fonte, período e data de coleta.">
+  <title>Brasil Saúde — vigilância, repasses e clima</title>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="topo">
+    <div class="topo-texto">
+      <p class="sobrelinha">Painel público · dados abertos</p>
+      <h1>Brasil Saúde</h1>
+      <p class="resumo">
+        Dengue por estado, repasses federais de saúde e clima — cada número com
+        <strong>fonte</strong>, <strong>período</strong> e <strong>data de coleta</strong>.
+      </p>
+    </div>
+    <div class="selo" id="status-coleta" role="status">Carregando dados…</div>
+  </header>
+
+  <main id="conteudo">
+    <section class="painel-mapa" aria-labelledby="titulo-mapa">
+      <div class="cabecalho-secao">
+        <div>
+          <h2 id="titulo-mapa">Situação por estado</h2>
+          <p class="nota" id="referencia-semana">Semana de referência: —</p>
+        </div>
+        <label class="seletor">
+          <span>Ir para um estado</span>
+          <select id="seletor-uf" aria-label="Selecionar estado">
+            <option value="">Selecione…</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="mapa-area">
+        <div id="mapa" role="img" aria-label="Mapa do Brasil com a incidência de dengue por estado"></div>
+        <div class="legenda" aria-hidden="true">
+          <p class="legenda-titulo">Casos por 100 mil habitantes na semana</p>
+          <ul>
+            <li><span class="cor cor-0"></span> sem dado</li>
+            <li><span class="cor cor-1"></span> até 2</li>
+            <li><span class="cor cor-2"></span> 2 a 5</li>
+            <li><span class="cor cor-3"></span> 5 a 10</li>
+            <li><span class="cor cor-4"></span> 10 a 20</li>
+            <li><span class="cor cor-5"></span> acima de 20</li>
+            <li><span class="cor cor-anomalia"></span> anomalia estatística (EARS)</li>
+          </ul>
+        </div>
+      </div>
+      <p class="nota">
+        O mapa usa a <strong>última semana publicada</strong> na fonte. Estados em cinza não
+        têm dado para essa semana — não são “zero caso”.
+      </p>
+    </section>
+
+    <section class="painel-detalhe" id="detalhe" aria-live="polite" aria-labelledby="titulo-detalhe">
+      <div class="vazio">
+        <h2 id="titulo-detalhe">Escolha um estado</h2>
+        <p>Clique no mapa ou use o seletor para ver a série, a faixa esperada, os repasses e o clima.</p>
+      </div>
+    </section>
+
+    <section class="secao-fontes" id="fontes" aria-labelledby="titulo-fontes">
+      <h2 id="titulo-fontes">Fontes e Metodologia</h2>
+      <div class="grade-fontes">
+        <article>
+          <h3>Como o “esperado” é calculado</h3>
+          <p>
+            Usamos o <strong>EARS</strong> (<em>Early Aberration Reporting System</em>, CDC):
+            comparamos os casos da semana com a média e o desvio-padrão das
+            <strong>sete semanas anteriores</strong>. Se o valor passa da faixa
+            (média + 3 desvios na variante C1; com 2 semanas de guarda na C2), é
+            <strong>anomalia estatística</strong>.
+          </p>
+          <p class="alerta-metodologico">
+            Anomalia não é diagnóstico nem previsão de surto. Notificação atrasada,
+            mudança de critério ou semana com feriado podem produzir falso positivo.
+            A faixa é sempre exibida junto do valor observado.
+          </p>
+        </article>
+        <article>
+          <h3>Por que repasses aparecem ao lado dos casos</h3>
+          <p>
+            Mostrar as duas séries juntas ajuda a perguntar “houve recurso no período?”.
+            O painel <strong>não afirma causalidade</strong>: empenho não é pagamento, e
+            o tempo entre repasse e efeito sanitário não é imediato. Leia os números como
+            contexto, não como culpa.
+          </p>
+        </article>
+        <article>
+          <h3>O que não guardamos</h3>
+          <p>
+            Nenhum dado pessoal. Nenhuma notificação individual: só totais por estado e
+            semana. Nenhum usuário, nenhum login, nenhum rastreador. O banco é local e o
+            backup fica na mesma máquina.
+          </p>
+        </article>
+      </div>
+
+      <h3 class="subtitulo">Fontes coletadas</h3>
+      <div class="tabela-rolagem">
+        <table id="tabela-fontes">
+          <caption class="oculto">Fontes de dados, órgão responsável, período e data de coleta</caption>
+          <thead>
+            <tr>
+              <th scope="col">Fonte</th>
+              <th scope="col">Órgão</th>
+              <th scope="col">Período</th>
+              <th scope="col">Coletado em</th>
+              <th scope="col">Situação</th>
+            </tr>
+          </thead>
+          <tbody><tr><td colspan="5">Carregando…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <p>
+      Projeto <strong>Brasil Saúde</strong> · código aberto (MIT) ·
+      construído com Loop Engineering.
+    </p>
+    <p class="nota">
+      Dados públicos agregados. Este painel não substitui boletim oficial nem orientação
+      de saúde: em caso de sintomas, procure o serviço de saúde.
+    </p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

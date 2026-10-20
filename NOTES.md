@@ -47,3 +47,23 @@ git, `pre-commit` e `pre-push` ativos, e um teste automatizado vigia o `.env.exa
 **Pendências (próximo ciclo).** Coleta real das fontes oficiais, banco SQLite, API,
 interface do painel, primeira publicação de indicadores e capturas de tela (quando a
 interface existir).
+
+## 2026-10-20 — restauração das Regras de Ouro
+
+**Achado.** A versão mais completa das regras estava em
+`selic-ipca-tracker/REGRAS_DE_OURO.md` (14/10/2026, R1–R36, 256 linhas), com cópia em
+`_backup-docs-pessoais-20261015`. A base `projeto_loop` parou em **R32** (11/09) e as
+cópias derivadas (`api-cep-valida`, este projeto) seguiram a base. As regras R33–R36
+nunca voltaram para a base.
+
+**Restaurado na base e neste projeto.** R33 (idioma pt-BR), R34 (`.env` em todo
+projeto), R35 (saber qual modelo responde), R36 (chave só na máquina local), itens 7 e 8
+da proteção em camadas e as notas de "consistência viva" e "kit de proteção global".
+
+**Ajuste de conteúdo.** R36 foi alinhada à instrução global de 18/10: o `.env` local
+**pode** guardar valor; o que nunca pode é arquivo versionado com valor de chave.
+
+**Pendente (fora deste projeto).** `selic-ipca-tracker` ignora `REGRAS_DE_OURO.md` no
+`.gitignore`, então a versão mais nova não está no histórico do git; e os projetos
+`projeto_becker`, `cub-sc`, `combustivelBR` e `projeto_hostinger` têm apenas R1–R23
+(sem a Parte IV do Loop, removida de propósito em 29/09).

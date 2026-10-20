@@ -153,6 +153,41 @@ Critérios explícitos: meta atingida, número máximo de iterações, rejeiçõ
 **R32. Consistência acima de criatividade.**
 Para o DeepSeek Flash: temperatura baixa (0.2–0.3), instruções específicas (listas e comandos exatos — o modelo pode ignorar instruções vagas) e contrato curto. Uma hipótese por ciclo, sempre no mesmo formato: previsível, repetível, auditável.
 
+**R33. Idioma de trabalho: português do Brasil.**
+Tudo que o agente escreve — resposta no chat, entrada no log, mensagem de commit,
+comentário no código, aviso de erro — sai em **português do Brasil**. Nunca responder
+em outro idioma: nem uma frase, nem um título, nem um caractere solto por engano.
+Nome técnico consagrado (commit, log, deploy, pipeline, branch) pode ficar como está;
+a frase em volta é em português. Única exceção: quando o próprio usuário pedir outro
+idioma. Fora disso, o padrão é sempre pt-BR.
+
+**R34. `.env` em todo projeto, sem exceção.**
+Todo projeto tem `.env` (local, nunca versionado) e `.env.example` (modelo, versionado).
+O template único é `%USERPROFILE%\.copilot\templates\env\` e a cópia sai do ajudante
+`novo-env.ps1`, que **nunca sobrescreve** um `.env` existente, ajusta `PROJETO_NOME` e
+**garante a proteção no `.gitignore` antes** de criar o arquivo. Segredo espalhado sem
+proteção é segredo a um `git add -A` de vazar — e chave vazada vaza para sempre.
+
+**R35. Saber qual modelo está respondendo.**
+Antes de culpar a sessão por lentidão, identifique o modelo: o script
+`%USERPROFILE%\.copilot\scripts\modelo-ativo.ps1` mostra, em segundos e sem rede, o
+modelo selecionado e o último que respondeu. Hoje o modelo é o **deepseek-v4-flash**,
+que às vezes demora: resposta longa, muitos passos de ferramenta e leitura de arquivo
+grande custam tempo. Em tarefa grande, avise o usuário e prefira passos poucos e
+direcionados — economia de contexto é o que mais acelera.
+
+**R36. Chave de API só na máquina local, nunca em arquivo versionado.**
+Nenhum valor de chave — DeepSeek, OpenAI, Google, Hugging Face, token, senha, DSN ou
+chave privada — é escrito em `.env.example`, README, código, issue, print ou log. O
+`.env` é local e não sobe, então preencher ali é legítimo; ainda assim, o preferível é a
+**variável de ambiente do usuário do Windows** (escopo `User`), que sobrevive a apagar o
+projeto. O código lê com `os.getenv` (o `load_dotenv` não sobrescreve variável já
+definida), então nada depende do arquivo ter a chave. Nunca imprimir o valor em resposta,
+log ou commit; nunca commitar `.env`; nunca usar `git add -f` em arquivo de segredo.
+Ferramentas: `segredos.ps1 -Listar` (só nomes), `-Definir NOME` (grava sem exibir),
+`-ConferirArquivos` (audita) e `-MigrarArquivos` (move para o ambiente sem descartar
+valor em conflito).
+
 ---
 
 ## Qualidade de dados — o checklist antes de usar qualquer base
@@ -175,16 +210,25 @@ Para o DeepSeek Flash: temperatura baixa (0.2–0.3), instruções específicas 
 - Fonte única de verdade para regras e limites (arquivo de configuração + `.env`).
 - Segredos e caminhos locais só no `.env`; o `.env.example` (modelo, sem segredos) é o único arquivo `.env*` versionado.
 
-> **REGRA INEGOCIÁVEL — o `.env` NUNCA é commitado.**
-> O `.env` guarda segredos (chaves de API, senhas, URLs de banco, caminhos locais).
+> **REGRA INEGOCIÁVEL — nenhum arquivo VERSIONADO tem valor de chave.**
+> O `.env` é local, nunca versionado, e **pode** guardar o valor da chave; o preferível,
+> porém, é a variável de ambiente do usuário do Windows (escopo `User`), que sobrevive a
+> apagar o projeto. Em `.env.example`, README, código, issue, print ou log: nunca valor.
+> O `.env` pertence ao dono: não altere, comente, migre nem apague o conteúdo por conta
+> própria (`segredos.ps1 -MigrarArquivos` só a pedido explícito).
 > Segredo que vaza para o git vaza para sempre: o histórico guarda tudo, mesmo depois de apagar.
 > Proteção em camadas:
 > 1. o `.gitignore` ignora `.env` e suas variações (`.env.*`);
-> 2. antes de todo `git add`, conferir com `git status` que `.env` não aparece na lista;
+> 2. antes de todo `git add`, conferir com `git status` que nenhum arquivo de segredo aparece na lista;
 > 3. se aparecer, parar e tirar do índice com `git rm --cached .env` antes do commit;
-> 4. nunca usar `git add -f` (forçar) em `.env`;
+> 4. nunca usar `git add -f` (forçar) em arquivo de segredo;
 > 5. gancho de pré-commit ativo (`.githooks/pre-commit`) que recusa o commit se qualquer `.env` aparecer — funciona mesmo com `git add -f`;
-> 6. gancho de pré-push ativo (`.githooks/pre-push`) que recusa o ENVIO se algum commit da fila contiver `.env` — segunda barreira, pega até commit que tenha burlado a primeira.
+> 6. gancho de pré-push ativo (`.githooks/pre-push`) que recusa o ENVIO se algum commit da fila contiver `.env` — segunda barreira, pega até commit que tenha burlado a primeira;
+> 7. auditoria com `segredos.ps1`: `-Listar` mostra as chaves do ambiente (só nomes), `-ConferirArquivos` acusa qualquer valor de chave que tenha sobrado em arquivo e `-MigrarArquivos` move para o ambiente **sem nunca descartar** (em conflito, guarda como `<NOME>_<PROJETO>`);
+> 8. chave exposta é chave queimada: na dúvida, revogar na origem e gerar outra.
+
+- **Consistência viva.** As regras globais do usuário ficam em `%USERPROFILE%\.copilot\instructions\` (idioma pt-BR, `.env` em todo projeto, identificação do modelo ativo) e valem em qualquer workspace — as R33, R34, R35 e R36 deste documento apontam para elas.
+- **Kit de proteção global.** Os ganchos do git saem do template `%USERPROFILE%\.copilot\templates\githooks\` e são instalados (ou atualizados) com `%USERPROFILE%\.copilot\scripts\instalar-hooks.ps1 -Destino "D:\Projetos" -Todos`. O instalador grava os ganchos em LF, registra `.githooks/* text eol=lf` no `.gitattributes` do projeto e aponta `core.hooksPath` para `.githooks`. Os ganchos rodam em sh + awk: no Windows, fim de linha CRLF faz o `sh` falhar — por isso o LF é obrigatório.
 
 - Git: commits pequenos e descritivos, **somente após teste real com resultado positivo**. Nunca versionar `.env`, dados brutos grandes ou caches.
 - Backup antes de operação destrutiva (conversão, sobrescrita, reorganização), com data no nome e política de retenção. Testar a restauração: backup que não volta não é backup.

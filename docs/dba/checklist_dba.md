@@ -37,7 +37,7 @@
 | 22 | Critério de aceitação objetivo | `docs/backlog.md` com impacto × esforço |
 | 23 | Registro de decisão | `NOTES.md` com data e motivo |
 | 24 | Ciclo medido (Loop Engineering) | `log_loop.md`, `meu-loop-agente/log.md` |
-| 25 | Teste como prova | 62 testes; saída registrada no `DIARIO.md` |
+| 25 | Teste como prova | 63 testes; saída registrada no `DIARIO.md` |
 | 26 | Honestidade sobre limite | este arquivo, colunas “não coberta” |
 
 ## 3. Como reproduzir a verificação

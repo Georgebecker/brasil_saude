@@ -89,7 +89,7 @@ classificação do `README.md`.
 
 - **Hipótese:** os critérios de sucesso do prompt estão verificáveis item a item.
 - **Mudança:** documentação (`docs/`, `DIARIO.md`), README e verificação final.
-- **Medição:** 62 testes verdes; `ruff` limpo; 19 critérios conferidos.
+- **Medição:** 63 testes verdes; `ruff` limpo; 19 critérios conferidos.
 - **Decisão:** ACEITO.
 - **Classificação reavaliada:** `utilidade` · `funcional` (local) — ver README.
 

@@ -115,7 +115,7 @@ painel de leitura.
 
 | Fase | Entrega | Critério de saída |
 |---|---|---|
-| 0 (hoje) | SQLite + backup verificado | 62 testes verdes |
+| 0 (hoje) | SQLite + backup verificado | 63 testes verdes |
 | 1 | PostgreSQL local via Docker | suíte verde contra Postgres |
 | 2 | Migrações versionadas | `alembic upgrade head` do zero funciona |
 | 3 | Deploy em nuvem | API responde com TLS; backup no S3 |

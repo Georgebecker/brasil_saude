@@ -68,12 +68,26 @@ Abra <http://127.0.0.1:8000>. Documentação interativa da API em `/api/docs`.
 ### Ver pelo celular (mesma rede Wi-Fi)
 
 ```powershell
-python scripts/servir_rede.py
+powershell -ExecutionPolicy Bypass -File scripts\servir_auto.ps1
 ```
 
-O script libera a porta no firewall (perfil de rede privada), descobre o IPv4 da máquina
-e imprime o endereço pronto — por exemplo `http://192.168.0.10:8000`. Nada é exposto na
-internet: não há redirecionamento de porta nem túnel.
+O script sobe o painel escondido, imprime o endereço e mantém um **vigia** que reinicia o
+servidor se ele cair — por exemplo `http://192.168.0.10:8000`. Nada é exposto na internet:
+não há redirecionamento de porta nem túnel.
+
+**Se o celular não abrir**, o Windows quase sempre é o culpado: o firewall bloqueia conexão
+de entrada e a rede de casa costuma estar classificada como *Pública*. Dois comandos
+resolvem, e ambos pedem administrador:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\diagnosticar_rede.ps1
+powershell -ExecutionPolicy Bypass -File scripts\liberar_firewall.ps1 -RedePrivada
+```
+
+O primeiro diz exatamente qual dos cinco pontos está falhando (escuta, IP, perfil de rede,
+regra de firewall, resposta pelo IP). O segundo libera a porta em todos os perfis e, com
+`-RedePrivada`, reclassifica a rede atual. Se ainda assim não abrir, desligue o
+*isolamento de clientes* (AP isolation) no roteador.
 
 ### Comandos do dia a dia
 

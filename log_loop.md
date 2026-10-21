@@ -149,6 +149,6 @@ classificação do `README.md`.
   `src/dados/pos_mandato.json` com situação pós-mandato e o que falta conferir;
   `scripts/servir_rede.py` para abrir na rede doméstica e imprimir o IP.
 - **Medição:** 82 testes verdes, `ruff` limpo, `/api/contexto` 200, painel acessível em
-  `http://192.168.3.73:8000` a partir de outro aparelho da rede.
+  `http://192.168.0.10:8000` a partir de outro aparelho da rede.
 - **Decisão:** **ACEITO** — com a ressalva de que a situação pós-mandato só aparece
   quando conferida; o resto é exibido como "não verificado".

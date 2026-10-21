@@ -72,7 +72,7 @@ python scripts/servir_rede.py
 ```
 
 O script libera a porta no firewall (perfil de rede privada), descobre o IPv4 da máquina
-e imprime o endereço pronto — por exemplo `http://192.168.3.73:8000`. Nada é exposto na
+e imprime o endereço pronto — por exemplo `http://192.168.0.10:8000`. Nada é exposto na
 internet: não há redirecionamento de porta nem túnel.
 
 ### Comandos do dia a dia

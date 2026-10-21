@@ -50,3 +50,7 @@ node_modules/
 # ---- Relatórios gerados pelo agente do Loop ----
 meu-loop-agente/outputs/*
 !meu-loop-agente/outputs/.gitkeep
+
+# estado e log do vigia da rede local (muda a cada ciclo)
+data/rede/
+

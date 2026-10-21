@@ -18,17 +18,35 @@ dado não entra — mesmo que seja interessante.
 | Território e população | IBGE (malha mínima + Censo 2022) | publicado | 2022 |
 | Repasses federais (função Saúde) | Portal da Transparência / CGU | publicado | 12 meses |
 | Programas e propostas federais | Transferegov | publicado | 2025 e 2026 |
+| Focos de queimada por UF e mês | INPE (`dataserver-coids.inpe.br`) | publicado | 2024 e 2025 |
 | Clima diário (chuva e temperatura) | INMET + Open-Meteo (fallback declarado) | publicado | 14 dias por estação |
 | Quem governava (presidente, ministros, governadores) | Curadoria com fonte oficial | publicado | 2019–2026 |
+| Situação pós-mandato | TSE, Câmara, Fiocruz e imprensa identificável | publicado | 2019–2026 |
 | Método de alerta | EARS C1 e C2 | publicado | série inteira |
+
+## 1.1 O que foi medido sobre fontes de queimada (21/10/2026)
+
+Três fatos que contrariam o que se costuma repetir sobre o INPE:
+
+1. **Não existe token pago nem autenticação obrigatória.** O antigo
+   `queimadas.dgi.inpe.br/api/focos` foi aposentado: hoje responde a página do portal
+   (HTML), não JSON. Isso é fim de endpoint, não cobrança.
+2. **O caminho aberto e estável** é o servidor de transferência:
+   `https://dataserver-coids.inpe.br/queimadas/queimadas/focos/csv/anual/Brasil_sat_ref/focos_br_ref{ANO}.zip`
+   — 23 arquivos anuais, o de 2025 com 5,9 MB e 136.393 focos. É o que o coletor usa.
+3. **O portal novo** `https://data.inpe.br/queimadas/portal/csv/download/...` entrega CSV
+   já agregados, sem token:
+   - `situacao-atual/regioes_especiais/7anos.csv` — matriz região × ano (2020–2026)
+   - `historico-mensal/regioes_especiais/amazonia_legal.csv` — série mensal **desde 1998**
+   - `situacao-atual/biomas/7anos.csv` e `historico-mensal/biomas/amazonia.csv`
+   - caminhos com `estados/sp.csv` devolvem **404**: por estado, a fonte é o ZIP anual.
 
 ## 2. O que o dono pediu e ainda não está publicado
 
 | Pedido | Fonte candidata | Situação em 21/10/2026 | O que falta |
 | --- | --- | --- | --- |
-| Outras arboviroses (chikungunya, zika) | InfoDengue, parâmetro `diseases` | **validado nesta sessão**: chikungunya devolve série real; zika devolve série quase toda zerada | acrescentar a coluna `doenca` em `caso_semana`, recalcular o EARS por doença e somar um seletor na tela |
-| Internações e SRAG | OpenDataSUS (SIH/SUS e SRAG) | não coletado | arquivos anuais grandes (centenas de MB); precisa de recorte por UF e de um job com cache em disco |
-| Queimadas e fumaça | INPE BDQueimadas | não coletado | o serviço passou a exigir cadastro/token para o CSV por estado; sem token não há série confiável |
+| Outras arboviroses (chikungunya, zika) | InfoDengue, parâmetro `diseases` | **validado nesta sessão**: chikungunya devolve série real; zika devolve série quase toda zerada | acrescentar a coluna `doenca` em `caso_semana`, recalcular o EARS por doença e somar um seletor na tela || Internações e SRAG | OpenDataSUS (SIH/SUS e SRAG) | não coletado | arquivos anuais grandes (centenas de MB); precisa de recorte por UF e de um job com cache em disco |
+| Queimadas e fumaça | INPE — `dataserver-coids.inpe.br` (ZIP anual) e `data.inpe.br` (CSV) | **publicado por UF e mês** (2024 e 2025) | falta modelar as séries longas por bioma e região especial |
 | Desastres e chuvas extremas (caso do RS em 2024) | S2iD/MIDR e CEMADEN | não coletado | não há API aberta documentada; o caminho é o relatório de reconhecimento federal por município (PDF/planilha) |
 | Obras federais, estaduais e municipais | Obrasgov (`obrasgov.gestao.gov.br`) e Transferegov | parcial: já temos propostas e valores | faltam a execução física, o empreendimento e a esfera (federal/estadual/municipal/consórcio) |
 | Saneamento (água, esgoto, resíduos) | SNIS (diagnóstico anual) | não coletado | planilhas anuais por município; é a melhor fonte para "quanto foi feito" |

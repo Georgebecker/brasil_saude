@@ -3,7 +3,7 @@
 ![Python](https://img.shields.io/badge/python-3.13%2B-blue)
 ![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-green)
 ![Status](https://img.shields.io/badge/status-funcional%20(local)-brightgreen)
-![Testes](https://img.shields.io/badge/testes-82%20verdes-brightgreen)
+![Testes](https://img.shields.io/badge/testes-99%20verdes-brightgreen)
 
 Um painel público que responde, com fonte em cada número: **qual a situação da dengue no
 meu estado, isso é anômalo, quanto o governo federal repassou, quais programas foram
@@ -28,32 +28,36 @@ dado exibido carrega órgão, URL, período de referência e data de coleta.
 
 ## Capturas
 
-![Panorama por estado com mapa coroplético, série semanal em barras e bloco de responsáveis](docs/img/01-panorama.png)
+![Panorama com mapa coroplético por estado, indicador de rede no topo e painel de detalhe](docs/img/01-panorama.png)
 
-*Panorama: mapa por incidência na última semana consolidada (2026-SE40), série de 30
-semanas em barras com a linha do limite EARS, repasses dos 12 meses e quem ocupava os
-cargos no período.*
+*Topo do painel: indicador de rede local (pulso verde = serviço respondendo), seis
+indicadores nacionais e o panorama por estado com mapa em SVG próprio. O painel lateral
+mostra casos da semana, limite do EARS, série em barras e quem ocupava os cargos.*
 
-![Ranking de incidência por estado e tabela completa da semana](docs/img/02-estados.png)
+![Série agregada por período, ranking de incidência e tabela de estados](docs/img/02-estados.png)
 
-*Comparação entre estados: barra por incidência e tabela com casos, taxa e situação.
-No celular a tabela vira lista de cartões, sem rolagem lateral.*
+*Estados em números: casos agregados por mês, trimestre, semestre ou ano, com recorte
+"de tal semana a tal semana"; ranking por incidência e tabela completa. No celular a
+tabela vira lista de cartões, sem rolagem lateral.*
 
-![Programas federais ofertados, valor planejado por estado e tabela de propostas](docs/img/03-subsidios.png)
+![Focos de queimada por estado e distribuição mensal](docs/img/03-queimadas.png)
 
-*Subsídios: 75 programas ofertados em 2026 pelos Ministérios da Saúde e das Cidades,
-valor planejado por estado e tabela de propostas por eixo.*
+*Queimadas: 278.299 focos em 2024 e 136.393 em 2025, agregados por estado e por mês a
+partir dos dados abertos do INPE — sem token e sem chave de API.*
 
-![Linha do tempo dos ministros da Saúde e mosaico de governadores por partido](docs/img/04-contexto.png)
+![Programas federais ofertados, valor planejado por estado e tabela de propostas](docs/img/04-subsidios.png)
 
-*Contexto político: quem ocupou o Ministério da Saúde desde 2019 e o partido de cada
-governador do mandato 2023–2026. Cargo, nome, partido, período e fonte — sem juízo.*
+*Subsídios: 75 programas ofertados em 2026 e 84 em 2025 pelos Ministérios da Saúde e das
+Cidades, com valor planejado por estado e propostas por eixo.*
 
 ![Mesmo painel em tela de celular, sem rolagem horizontal](docs/img/05-celular.png)
 
-*No celular (390 × 844 px): mapa, cartões e gráfico empilhados, tabelas convertidas em
-cartões e menu com rolagem própria. Verificado por script: `scrollWidth` igual a
-`clientWidth` em 390, 768 e 1440 px.*
+*No celular (390 × 844 px): mapa, cartões e gráficos empilhados, menu com rolagem própria.
+Verificado por script: `scrollWidth` igual a `clientWidth` em 390, 768 e 1440 px.*
+
+A seção **Contexto** (linha do tempo de ministros e mosaico de governadores por partido)
+não aparece nas capturas por causa do limite de cinco imagens por projeto — está descrita
+em texto e visível em `/ #contexto`.
 
 ## Como rodar
 
@@ -102,32 +106,37 @@ python scripts/backup_sqlite.py restaurar data/backups/<arquivo>.db
 
 - **Coleta real, sem dado inventado.** 27 UFs, 5.571 municípios, 51 semanas de dengue por
   estado, R$ 187,8 bilhões de repasses federais em 12 meses, 268 estações de clima,
-  75 programas federais em 2026 e 84 em 2025, 6 ministros da Saúde e 27 governadores.
+  75 programas federais em 2026 e 84 em 2025, 278.299 focos de queimada em 2024 e 136.393
+  em 2025, 6 ministros da Saúde e 27 governadores.
 - **Proveniência obrigatória.** Toda tabela aponta para uma linha de `fonte` com órgão,
-  URL, período e data de coleta. A tela de fontes mostra 7 de 8 fontes com status `ok`.
+  URL, período e data de coleta. A tela de fontes mostra 8 de 9 fontes com status `ok`.
 - **EARS com teste canônico.** C1 (7 semanas, k=3) e C2 (janela deslocada) calculados do
   zero, com exemplo documentado em `tests/test_ears.py`.
 - **Lacuna não é zero.** Semana não publicada entra como `None`, aparece como buraco no
-  gráfico e como "sem dado" na tabela.
+  gráfico e como "sem dado" na tabela; a média só considera semanas publicadas.
+- **Período configurável.** Semana, mês, trimestre, semestre, ano e recorte "de tal semana
+  a tal semana", calculado no servidor com a semana epidemiológica brasileira.
 - **Frontend sem framework e sem CDN.** Zero requisição a terceiros: nenhum CDN, nenhuma
   fonte externa, nenhum script de análise. Mapa, gráfico de barras e ranking são SVG e
   HTML gerados no navegador.
 - **Responsivo de verdade.** Layout verificado em 390, 768 e 1440 px sem rolagem
   horizontal (`scrollWidth == clientWidth`).
+- **Indicador de rede com rearme.** Pílula com pulso verde/vermelho no cabeçalho; o
+  servidor roda sob um vigia que o reinicia se ele cair e aceita rearme pelo clique.
 - **Política de dados publicada** em `/privacidade` e em `docs/politica_dados.md`.
 - **Autorização da Fase 2.** RBAC/ABAC local com papéis `admin`, `gestor_estadual` e
   `publico`; `gestor_estadual` recebe 403 ao pedir outro estado. Sem login no MVP.
 - **Backup e restauração com prova.** Cópia pela API do SQLite, `integrity_check`,
   SHA-256 e restauração conferida byte a byte.
-- **82 testes verdes e `ruff` limpo**, com CI no GitHub Actions.
+- **99 testes verdes e `ruff` limpo**, com CI no GitHub Actions.
 
 ## O que não foi alcançado
 
 | Item | Por que ficou de fora |
 | --- | --- |
-| Outras doenças (chikungunya, zika) | a API do InfoDengue responde (validado), mas exige coluna `doenca` no esquema e recálculo do EARS por doença — virou ciclo do roadmap, não do MVP |
+| Outras doenças (chikungunya, zika) | a API do InfoDengue responde (validado) e traz nível de alerta 1–4; exige coluna `doenca` no esquema e recálculo por doença — próximo ciclo do roadmap |
 | Internações, SRAG e óbitos | dependem de bases anuais grandes do OpenDataSUS (SIH/SUS), sem recorte por UF pronto |
-| Queimadas e fumaça | o INPE passou a exigir cadastro/token para o CSV por estado |
+| Queimadas por bioma e região especial | o painel publica por UF e mês; as séries longas (1998–2026) por bioma e por região especial estão mapeadas em `data.inpe.br`, falta modelar |
 | Desastres (enchentes do RS) | o S2iD/MIDR não tem API aberta documentada; o dado existe em planilha e relatório |
 | Obras por esfera (federal/estadual/municipal) | temos proposta e valor planejado; execução física e esfera exigem o Obrasgov |
 | Saneamento (SNIS) | diagnóstico anual em planilha; fora do escopo do ciclo |
@@ -157,11 +166,12 @@ python scripts/backup_sqlite.py restaurar data/backups/<arquivo>.db
 
 ## O que fazer agora
 
-1. Chikungunya e zika (fonte já validada; falta esquema e seletor).
+1. Chikungunya e zika (fonte validada, com nível de alerta 1–4 e nowcasting por município).
 2. Série diária longa de clima por estado — destrava a correlação com a dengue.
-3. Obrasgov e SNIS: quanto foi destinado, quanto foi executado.
-4. Internações (SIH/SUS) para falar de gravidade, não só de notificação.
-5. Fase 3 de identidade: gov.br (OAuth2/OIDC) e MFA para acesso administrativo.
+3. Séries de queimadas por bioma e por região especial (1998–2026) do `data.inpe.br`.
+4. Obrasgov e SNIS: quanto foi destinado, quanto foi executado.
+5. Internações (SIH/SUS) para falar de gravidade, não só de notificação.
+6. Fase 3 de identidade: gov.br (OAuth2/OIDC) e MFA para acesso administrativo.
 
 O detalhamento de cada item, com a fonte candidata e o obstáculo, está em
 [`docs/roadmap_dados.md`](docs/roadmap_dados.md).
@@ -174,7 +184,7 @@ scripts/coletar.py  →  src/fontes/*  →  SQLite (data/brasil_saude.db)  →  
 
 | Camada | Arquivo | Papel |
 | --- | --- | --- |
-| Coleta | `src/fontes/{ibge,infodengue,inmet,transparencia,transferegov,responsaveis}.py` | baixa, normaliza e grava com carimbo de data |
+| Coleta | `src/fontes/{ibge,infodengue,inmet,transparencia,transferegov,queimadas,responsaveis}.py` | baixa, normaliza e grava com carimbo de data |
 | Rede | `src/rede.py` | retry com espera crescente, decodificação UTF-8 com queda para Latin-1 |
 | Detecção | `src/ears.py` | C1 e C2, janela móvel, desvio amostral |
 | Serviços | `src/servicos/*` | regra de negócio: série, incidência, repasses, subsídios, contexto |
@@ -191,6 +201,10 @@ scripts/coletar.py  →  src/fontes/*  →  SQLite (data/brasil_saude.db)  →  
 | `GET /api/estados/{uf}/repasses` | repasses federais da função Saúde |
 | `GET /api/estados/{uf}/clima` | chuva e temperatura por município |
 | `GET /api/estados/{uf}/contexto` | governador, presidente e ministros do período |
+| `GET /api/estados/{uf}/agregado?granularidade=mes` | série recortada e agregada por período |
+| `GET /api/queimadas?ano=2025` | focos de queimada por estado e por mês (INPE) |
+| `GET /api/rede` | endereço da rede local e há quanto tempo o serviço está no ar |
+| `POST /api/rede/rearmar` | pede ao vigia que reinicie o servidor |
 | `GET /api/subsidios?ano=2026` | programas ofertados e propostas por UF |
 | `GET /api/contexto` | linha do tempo de ministros e governadores |
 | `GET /api/fontes` | proveniência de tudo que aparece na tela |

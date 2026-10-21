@@ -1,0 +1,100 @@
+{
+  "_nota": "Situação pós-mandato dos titulares do Ministério da Saúde. Cada linha declara o que foi conferido, quando e onde. O que não passou por conferência fica como 'nao_verificado' — o painel prefere dizer que não sabe a afirmar algo sobre uma pessoa real sem fonte.",
+  "_validado_em": "2026-10-21",
+  "_metodo": "Pesquisa manual em fonte secundária (Wikipédia) e conferência cruzada no site do órgão quando possível. A fonte primária (Diário Oficial, Câmara, agência oficial) deve ser anexada em cada ciclo de revisão.",
+  "situacoes": {
+    "em_exercicio": "Continua no cargo",
+    "cargo_eletivo": "Passou a ocupar cargo eletivo",
+    "setor_privado": "Retornou à atividade privada",
+    "instituicao_publica": "Assumiu função em instituição pública",
+    "aposentado": "Declarou aposentadoria ou afastamento da vida pública",
+    "nao_verificado": "Situação ainda não conferida"
+  },
+  "registros": [
+    {
+      "nome": "Alexandre Padilha",
+      "cargo": "Ministro da Saúde",
+      "periodo": "11/03/2025 a 31/12/2026",
+      "situacao": "em_exercicio",
+      "resumo": "Em exercício no cargo na data de referência do painel.",
+      "verificado": true,
+      "confianca": "alta",
+      "url_fonte": "https://www.gov.br/saude/pt-br/composicao",
+      "verificado_em": "2026-10-21",
+      "pendencias": []
+    },
+    {
+      "nome": "Nísia Trindade",
+      "cargo": "Ministra da Saúde",
+      "periodo": "01/01/2023 a 10/03/2025",
+      "situacao": "nao_verificado",
+      "resumo": "Deixou o ministério em março de 2025. O destino institucional posterior ainda não foi conferido nesta curadoria; a hipótese mais citada na imprensa é o retorno à Fiocruz, mas ela não foi validada aqui.",
+      "verificado": false,
+      "confianca": "baixa",
+      "url_fonte": "https://www.gov.br/saude/pt-br/composicao",
+      "verificado_em": "2026-10-21",
+      "pendencias": [
+        "confirmar vínculo atual na Fiocruz na página institucional",
+        "registrar portaria de exoneração no Diário Oficial"
+      ]
+    },
+    {
+      "nome": "Marcelo Queiroga",
+      "cargo": "Ministro da Saúde",
+      "periodo": "23/03/2021 a 31/12/2022",
+      "situacao": "nao_verificado",
+      "resumo": "Médico cardiologista; deixou o cargo no fim do governo anterior. A atividade exercida depois disso ainda não foi conferida nesta curadoria.",
+      "verificado": false,
+      "confianca": "baixa",
+      "url_fonte": "https://www.gov.br/saude/pt-br/composicao",
+      "verificado_em": "2026-10-21",
+      "pendencias": [
+        "conferir registro profissional e vínculo empregatício atual",
+        "verificar eventual candidatura ou filiação partidária após 2022"
+      ]
+    },
+    {
+      "nome": "Eduardo Pazuello",
+      "cargo": "Ministro da Saúde",
+      "periodo": "16/05/2020 a 23/03/2021",
+      "situacao": "cargo_eletivo",
+      "resumo": "General de divisão do Exército; passou a exercer mandato de deputado federal pelo Rio de Janeiro.",
+      "verificado": true,
+      "confianca": "alta",
+      "url_fonte": "https://pt.wikipedia.org/wiki/Eduardo_Pazuello",
+      "verificado_em": "2026-10-21",
+      "pendencias": [
+        "anexar página oficial do mandato na Câmara dos Deputados"
+      ]
+    },
+    {
+      "nome": "Nelson Teich",
+      "cargo": "Ministro da Saúde",
+      "periodo": "17/04/2020 a 15/05/2020",
+      "situacao": "setor_privado",
+      "resumo": "Médico oncologista; permaneceu 29 dias no cargo e retornou à atividade privada como consultor em saúde e empresário.",
+      "verificado": true,
+      "confianca": "alta",
+      "url_fonte": "https://pt.wikipedia.org/wiki/Nelson_Teich",
+      "verificado_em": "2026-10-21",
+      "pendencias": [
+        "anexar fonte primária da exoneração (Diário Oficial da União)"
+      ]
+    },
+    {
+      "nome": "Luiz Henrique Mandetta",
+      "cargo": "Ministro da Saúde",
+      "periodo": "01/01/2019 a 16/04/2020",
+      "situacao": "nao_verificado",
+      "resumo": "Médico ortopedista; deixou o cargo em abril de 2020. A trajetória posterior (atividade privada, ensino ou disputa eleitoral) não foi conferida nesta curadoria.",
+      "verificado": false,
+      "confianca": "baixa",
+      "url_fonte": "https://www.gov.br/saude/pt-br/composicao",
+      "verificado_em": "2026-10-21",
+      "pendencias": [
+        "conferir filiação partidária e eventuais candidaturas após 2020",
+        "confirmar vínculo profissional atual"
+      ]
+    }
+  ]
+}

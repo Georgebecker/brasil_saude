@@ -130,3 +130,15 @@ verificado como tecnicamente viável; **`mailtura.com` não é serviço de e-mai
 
 **Decisão.** ACEITO (com pendências declaradas): painel funcional, suíte verde,
 backup restaurado e documentação completa.
+## 2026-10-21 — contexto político e o limite de falar de pessoas
+
+Decisão: o painel só publica situação pós-mandato quando ela foi conferida em fonte
+pública. O arquivo `src/dados/pos_mandato.json` guarda `verificado`, `confianca`,
+`url_fonte` e `pendencias`; o que não passou por conferência aparece na tela como
+"situação não verificada". Motivo: afirmação sobre pessoa real sem fonte é difamação
+potencial, e o projeto não troca credibilidade por uma frase de efeito.
+
+Decisão: os dois defeitos visuais do mapa (UF gravada antes do dado e Mercator em
+radianos) não quebravam teste nenhum. Por isso a verificação passou a incluir captura
+automatizada com Playwright em três larguras, comparando `scrollWidth` com
+`clientWidth` e contando elementos renderizados.

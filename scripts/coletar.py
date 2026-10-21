@@ -27,7 +27,7 @@ if str(RAIZ) not in sys.path:
     sys.path.insert(0, str(RAIZ))
 
 from src import config, db  # noqa: E402
-from src.fontes import ibge, infodengue, inmet, responsaveis, transparencia  # noqa: E402
+from src.fontes import ibge, infodengue, inmet, responsaveis, transferegov, transparencia  # noqa: E402
 from src.rede import ClienteHTTP  # noqa: E402
 from src.servicos import epidemiologia  # noqa: E402
 
@@ -73,6 +73,11 @@ def etapa_clima(args: argparse.Namespace) -> dict:
     return {**estacoes, **clima}
 
 
+def etapa_subsidios(args: argparse.Namespace) -> dict:
+    """Programas federais e propostas por UF (Transferegov)."""
+    return transferegov.coletar(args.ano, caminho_banco=args.banco)
+
+
 def etapa_ears(args: argparse.Namespace) -> dict:
     """Recalcula os alertas EARS a partir dos casos já gravados."""
     caminho = args.banco or db.caminho_banco()
@@ -90,11 +95,14 @@ ETAPAS = {
     "dengue": etapa_dengue,
     "capitais": etapa_capitais,
     "orcamento": etapa_orcamento,
+    "subsidios": etapa_subsidios,
     "clima": etapa_clima,
     "ears": etapa_ears,
 }
 
-ORDEM_COMPLETA = ["base", "responsaveis", "dengue", "capitais", "orcamento", "clima", "ears"]
+ORDEM_COMPLETA = [
+    "base", "responsaveis", "dengue", "capitais", "orcamento", "subsidios", "clima", "ears"
+]
 
 
 def executar(nome: str, args: argparse.Namespace) -> dict:
@@ -110,6 +118,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Coleta de dados do Brasil Saúde")
     parser.add_argument("etapa", choices=[*ORDEM_COMPLETA, "tudo"])
     parser.add_argument("--meses", type=int, default=12, help="janela de meses (orçamento)")
+    parser.add_argument("--ano", type=int, default=2026, help="ano dos subsídios")
     parser.add_argument("--banco", type=Path, default=None, help="caminho do SQLite")
     parser.add_argument("--json", action="store_true", help="imprime só o JSON final")
     args = parser.parse_args()

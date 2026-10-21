@@ -251,6 +251,7 @@ def serie_da_uf(conexao: sqlite3.Connection, uf: str, *, variante: str = "C1") -
         return {"uf": uf.upper(), "semanas": [], "metodo": variante}
 
     resultados = ears.detectar_serie([s.casos for s in semanas], variante=variante)
+    referencia = ultima_semana(conexao)
     pontos = []
     for semana, resultado in zip(semanas, resultados, strict=True):
         pontos.append(
@@ -268,5 +269,23 @@ def serie_da_uf(conexao: sqlite3.Connection, uf: str, *, variante: str = "C1") -
         "uf": uf.upper(),
         "metodo": variante,
         "semanas": pontos,
-        "ultima": pontos[-1] if pontos else None,
+        "ultima": _ultima_consolidada(pontos, referencia),
     }
+
+
+def _ultima_consolidada(pontos: list[dict], referencia: tuple[int, int] | None) -> dict | None:
+    """Último ponto que já está consolidado na semana de referência nacional.
+
+    A semana em curso chega parcial (às vezes só um estado publicou). Ela
+    continua no gráfico, porque foi publicada, mas não pode ser o retrato do
+    estado: comparar 3 dias de notificação com um limite semanal cheio faria o
+    painel dizer "dentro do esperado" por um motivo falso.
+    """
+    if not pontos:
+        return None
+    if referencia is None:
+        return pontos[-1]
+    consolidados = [
+        ponto for ponto in pontos if (ponto["ano"], ponto["semana"]) <= referencia
+    ]
+    return consolidados[-1] if consolidados else pontos[0]

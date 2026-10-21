@@ -1,143 +1,271 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Painel público de dengue, repasses federais de saúde e clima, com fonte, período e data de coleta.">
-  <title>Brasil Saúde — vigilância, repasses e clima</title>
-  <link rel="preconnect" href="https://unpkg.com">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-  <link rel="stylesheet" href="/static/styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Painel público de dengue por estado, repasses federais de saúde, clima e aproveitamento de programas federais. Todo número traz fonte, período e data de coleta.">
+<meta name="theme-color" content="#0b2545">
+<meta name="color-scheme" content="light">
+<title>Brasil Saúde — dengue, verba federal e clima por estado</title>
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
 
-  <header class="topo">
-    <div class="topo-texto">
-      <p class="sobrelinha">Painel público · dados abertos</p>
-      <h1>Brasil Saúde</h1>
-      <p class="resumo">
-        Dengue por estado, repasses federais de saúde e clima — cada número com
-        <strong>fonte</strong>, <strong>período</strong> e <strong>data de coleta</strong>.
+<header class="topo">
+  <div class="topo__interno">
+    <a class="marca" href="/" aria-label="Brasil Saúde, página inicial">
+      <span class="marca__sinal" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="32" height="32" role="presentation">
+          <rect x="1" y="1" width="30" height="30" rx="9" fill="currentColor" opacity=".14"/>
+          <path d="M6 20.5h4.2l2.3-7 3.4 11 3-8.6 1.6 4.6H26" fill="none" stroke="currentColor"
+                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span class="marca__texto">
+        <strong>Brasil Saúde</strong>
+        <small>vigilância e responsabilização</small>
+      </span>
+    </a>
+
+    <nav class="nav" aria-label="Seções do painel">
+      <a href="#panorama">Panorama</a>
+      <a href="#estados">Estados</a>
+      <a href="#subsidios">Subsídios</a>
+      <a href="#contexto">Contexto</a>
+      <a href="#fontes">Fontes</a>
+      <a href="/privacidade">Privacidade</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero__interno">
+    <div class="hero__texto">
+      <p class="hero__selo">Dados abertos · leitura pública · sem cadastro</p>
+      <h1>Dengue, verba federal e clima <span class="destaque">na mesma leitura</span></h1>
+      <p class="hero__lead">
+        Um painel para conferir o que a vigilância publica, quanto o governo federal repassou
+        e quais estados aproveitaram os programas ofertados. Cada número aparece com a fonte,
+        o período de referência e a data de coleta.
       </p>
+      <div class="hero__acoes">
+        <a class="botao" href="#panorama">Explorar o painel</a>
+        <a class="botao botao--fantasma" href="/api/docs">Ver a API</a>
+      </div>
+      <p class="hero__estado" id="status-coleta" role="status">Carregando situação da coleta…</p>
     </div>
-    <div class="selo" id="status-coleta" role="status">Carregando dados…</div>
-  </header>
 
-  <main id="conteudo">
-    <section class="painel-mapa" aria-labelledby="titulo-mapa">
-      <div class="cabecalho-secao">
-        <div>
-          <h2 id="titulo-mapa">Situação por estado</h2>
-          <p class="nota" id="referencia-semana">Semana de referência: —</p>
-        </div>
-        <label class="seletor">
-          <span>Ir para um estado</span>
-          <select id="seletor-uf" aria-label="Selecionar estado">
-            <option value="">Selecione…</option>
+    <div class="kpis" id="kpis" aria-label="Indicadores nacionais"></div>
+  </div>
+</section>
+
+<main id="conteudo">
+
+  <section class="secao" id="panorama">
+    <header class="secao__cabecalho">
+      <div>
+        <p class="secao__rotulo">Vigilância</p>
+        <h2>Panorama por estado</h2>
+        <p class="secao__lead">
+          Clique num estado para ver a série semanal, a faixa esperada pelo método EARS e
+          o que a vigilância registrou na última semana publicada.
+        </p>
+      </div>
+      <div class="controles">
+        <label class="campo">
+          <span>Estado</span>
+          <select id="seletor-uf"></select>
+        </label>
+        <label class="campo">
+          <span>Método</span>
+          <select id="seletor-metodo">
+            <option value="C1">EARS C1</option>
+            <option value="C2">EARS C2</option>
           </select>
         </label>
       </div>
+    </header>
 
-      <div class="mapa-area">
-        <div id="mapa" role="img" aria-label="Mapa do Brasil com a incidência de dengue por estado"></div>
-        <div class="legenda" aria-hidden="true">
-          <p class="legenda-titulo">Casos por 100 mil habitantes na semana</p>
-          <ul>
-            <li><span class="cor cor-0"></span> sem dado</li>
-            <li><span class="cor cor-1"></span> até 2</li>
-            <li><span class="cor cor-2"></span> 2 a 5</li>
-            <li><span class="cor cor-3"></span> 5 a 10</li>
-            <li><span class="cor cor-4"></span> 10 a 20</li>
-            <li><span class="cor cor-5"></span> acima de 20</li>
-            <li><span class="cor cor-anomalia"></span> anomalia estatística (EARS)</li>
-          </ul>
+    <div class="panorama">
+      <div class="cartao cartao--mapa">
+        <div class="mapa" id="mapa" aria-label="Mapa do Brasil com incidência de dengue por estado"></div>
+        <ul class="legenda" id="legenda" aria-label="Legenda de incidência por 100 mil habitantes"></ul>
+      </div>
+      <aside class="cartao detalhe" id="detalhe" aria-live="polite">
+        <p class="nota">Escolha um estado no mapa ou na lista para ver os detalhes.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="secao" id="estados">
+    <header class="secao__cabecalho">
+      <div>
+        <p class="secao__rotulo">Comparação</p>
+        <h2>Estados em números</h2>
+        <p class="secao__lead">
+          Ranking pela incidência da última semana disponível. Onde não houve publicação,
+          a linha aparece como “sem dado” — nunca como zero.
+        </p>
+      </div>
+    </header>
+
+    <div class="duas-colunas">
+      <div class="cartao">
+        <h3 class="cartao__titulo">Incidência por 100 mil habitantes</h3>
+        <div class="ranking" id="ranking"></div>
+      </div>
+      <div class="cartao">
+        <h3 class="cartao__titulo">Tabela da semana</h3>
+        <div class="tabela-envolucro" id="tabela-estados"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao secao--alt" id="subsidios">
+    <header class="secao__cabecalho">
+      <div>
+        <p class="secao__rotulo">Recursos federais</p>
+        <h2>Subsídios e programas: quem ofertou, quem aproveitou</h2>
+        <p class="secao__lead" id="subsidios-lead">
+          Programas disponibilizados pelo Ministério da Saúde e pelo Ministério das Cidades,
+          com o número de propostas e os valores planejados por estado.
+        </p>
+      </div>
+      <div class="controles">
+        <label class="campo">
+          <span>Ano</span>
+          <select id="seletor-ano">
+            <option value="2026">2026</option>
+            <option value="2025">2025</option>
+          </select>
+        </label>
+      </div>
+    </header>
+
+    <div class="kpis kpis--claro" id="kpis-subsidios" aria-label="Indicadores de subsídios"></div>
+
+    <div class="duas-colunas">
+      <div class="cartao">
+        <h3 class="cartao__titulo">Programas ofertados</h3>
+        <p class="cartao__nota" id="programas-nota">Carregando…</p>
+        <div class="programas" id="programas"></div>
+      </div>
+      <div class="cartao">
+        <h3 class="cartao__titulo">Valor planejado por estado</h3>
+        <div class="ranking" id="ranking-subsidios"></div>
+      </div>
+    </div>
+
+    <div class="cartao">
+      <h3 class="cartao__titulo">Propostas por estado e eixo</h3>
+      <div class="tabela-envolucro" id="tabela-subsidios"></div>
+      <p class="aviso" id="aviso-subsidios"></p>
+    </div>
+  </section>
+
+  <section class="secao secao--alt" id="contexto">
+    <header class="secao__cabecalho">
+      <div>
+        <p class="secao__rotulo">Responsabilização</p>
+        <h2>Quem governava no período dos dados</h2>
+        <p class="secao__lead">
+          Cargo, nome, partido e período de quem estava no governo federal e nos governos
+          estaduais. Sem esse bloco, o número fica solto: o leitor não sabe a quem atribuir
+          a decisão. O painel informa; não emite juízo.
+        </p>
+      </div>
+    </header>
+
+    <div class="cartao">
+      <h3 class="cartao__titulo">Presidência e Ministério da Saúde</h3>
+      <div class="timeline" id="timeline-ministros"></div>
+      <p class="nota" id="contexto-aviso"></p>
+    </div>
+
+    <div class="cartao">
+      <h3 class="cartao__titulo">Governadores e partidos (mandato 2023–2026)</h3>
+      <ul class="legenda legenda--partidos" id="legenda-partidos"></ul>
+      <div class="governadores" id="governadores"></div>
+      <p class="nota" id="contexto-limitacao"></p>
+    </div>
+  </section>
+
+  <section class="secao" id="fontes">
+    <header class="secao__cabecalho">
+      <div>
+        <p class="secao__rotulo">Proveniência</p>
+        <h2>De onde vem cada número</h2>
+        <p class="secao__lead">
+          Fontes públicas, coletadas por script e guardadas com data. O painel não estima,
+          não completa lacuna e não substitui valor ausente por zero.
+        </p>
+      </div>
+    </header>
+    <div class="fontes" id="fontes-lista"></div>
+    <article class="cartao metodologia" id="metodologia">
+      <h3 class="cartao__titulo">Como ler os números</h3>
+      <div class="metodologia__grade">
+        <div>
+          <h4>EARS C1 e C2</h4>
+          <p>
+            O método compara os casos da semana com a média das semanas anteriores mais um
+            múltiplo do desvio padrão. <strong>C1</strong> usa 7 semanas de histórico e fator 3;
+            <strong>C2</strong> usa 2 dias de folga sobre uma janela deslocada. Quando o
+            observado passa do limite, a semana é marcada como anomalia.
+          </p>
+        </div>
+        <div>
+          <h4>Incidência</h4>
+          <p>
+            Casos da semana divididos pela população residente, multiplicados por 100 mil.
+            A população vem do Censo 2022 do IBGE; taxa e contagem são coisas diferentes e
+            aparecem separadas na tela.
+          </p>
+        </div>
+        <div>
+          <h4>Subsídios</h4>
+          <p>
+            Programas e propostas vêm do Transferegov. <strong>Proposta aprovada não é obra
+            entregue</strong>: o valor exibido é o planejado no cadastro da proposta, e
+            pagamento e execução dependem de outra fonte.
+          </p>
+        </div>
+        <div>
+          <h4>O que o painel não faz</h4>
+          <p>
+            Não prevê surto, não ranqueia municípios por risco individual e não publica dado
+            pessoal. A série mostra o que foi publicado, com a lacuna onde nada foi publicado.
+          </p>
         </div>
       </div>
-      <p class="nota">
-        O mapa usa a <strong>última semana publicada</strong> na fonte. Estados em cinza não
-        têm dado para essa semana — não são “zero caso”.
+    </article>
+  </section>
+
+</main>
+
+<footer class="rodape">
+  <div class="rodape__interno">
+    <div>
+      <p class="rodape__marca">Brasil Saúde</p>
+      <p class="rodape__texto">
+        Painel público de vigilância e responsabilização em saúde. Código aberto,
+        sem rastreamento e sem cookies.
       </p>
-    </section>
+    </div>
+    <nav class="rodape__links" aria-label="Links do rodapé">
+      <a href="/privacidade">Política de tratamento de dados</a>
+      <a href="/api/docs">Documentação da API</a>
+      <a href="/api/fontes">Fontes em JSON</a>
+      <a href="#metodologia">Metodologia</a>
+    </nav>
+  </div>
+  <p class="rodape__fino">
+    Dados públicos. Nenhuma informação pessoal identificável é coletada, processada ou exibida.
+  </p>
+</footer>
 
-    <section class="painel-detalhe" id="detalhe" aria-live="polite" aria-labelledby="titulo-detalhe">
-      <div class="vazio">
-        <h2 id="titulo-detalhe">Escolha um estado</h2>
-        <p>Clique no mapa ou use o seletor para ver a série, a faixa esperada, os repasses e o clima.</p>
-      </div>
-    </section>
-
-    <section class="secao-fontes" id="fontes" aria-labelledby="titulo-fontes">
-      <h2 id="titulo-fontes">Fontes e Metodologia</h2>
-      <div class="grade-fontes">
-        <article>
-          <h3>Como o “esperado” é calculado</h3>
-          <p>
-            Usamos o <strong>EARS</strong> (<em>Early Aberration Reporting System</em>, CDC):
-            comparamos os casos da semana com a média e o desvio-padrão das
-            <strong>sete semanas anteriores</strong>. Se o valor passa da faixa
-            (média + 3 desvios na variante C1; com 2 semanas de guarda na C2), é
-            <strong>anomalia estatística</strong>.
-          </p>
-          <p class="alerta-metodologico">
-            Anomalia não é diagnóstico nem previsão de surto. Notificação atrasada,
-            mudança de critério ou semana com feriado podem produzir falso positivo.
-            A faixa é sempre exibida junto do valor observado.
-          </p>
-        </article>
-        <article>
-          <h3>Por que repasses aparecem ao lado dos casos</h3>
-          <p>
-            Mostrar as duas séries juntas ajuda a perguntar “houve recurso no período?”.
-            O painel <strong>não afirma causalidade</strong>: empenho não é pagamento, e
-            o tempo entre repasse e efeito sanitário não é imediato. Leia os números como
-            contexto, não como culpa.
-          </p>
-        </article>
-        <article>
-          <h3>O que não guardamos</h3>
-          <p>
-            Nenhum dado pessoal. Nenhuma notificação individual: só totais por estado e
-            semana. Nenhum usuário, nenhum login, nenhum rastreador. O banco é local e o
-            backup fica na mesma máquina.
-          </p>
-        </article>
-      </div>
-
-      <h3 class="subtitulo">Fontes coletadas</h3>
-      <div class="tabela-rolagem">
-        <table id="tabela-fontes">
-          <caption class="oculto">Fontes de dados, órgão responsável, período e data de coleta</caption>
-          <thead>
-            <tr>
-              <th scope="col">Fonte</th>
-              <th scope="col">Órgão</th>
-              <th scope="col">Período</th>
-              <th scope="col">Coletado em</th>
-              <th scope="col">Situação</th>
-            </tr>
-          </thead>
-          <tbody><tr><td colspan="5">Carregando…</td></tr></tbody>
-        </table>
-      </div>
-    </section>
-  </main>
-
-  <footer class="rodape">
-    <p>
-      Projeto <strong>Brasil Saúde</strong> · código aberto (MIT) ·
-      construído com Loop Engineering.
-    </p>
-    <p class="nota">
-      Dados públicos agregados. Este painel não substitui boletim oficial nem orientação
-      de saúde: em caso de sintomas, procure o serviço de saúde.
-    </p>
-  </footer>
-
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script src="/static/app.js" defer></script>
+<script src="/static/app.js" defer></script>
 </body>
 </html>

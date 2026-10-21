@@ -42,15 +42,32 @@ class Resposta:
     tipo: str
 
     def json(self) -> object:
-        """Interpreta o corpo como JSON, com mensagem clara se não for."""
+        """Interpreta o corpo como JSON, com mensagem clara se não for.
+
+        Alguns serviços do governo devolvem JSON em Latin-1 sem declarar o
+        charset no cabeçalho (o Transferegov faz isso com "º" e acentos).
+        Tentar UTF-8 primeiro e cair para Latin-1 evita gravar "n�" no banco.
+        """
         try:
             return json.loads(self.conteudo.decode("utf-8"))
-        except (UnicodeDecodeError, json.JSONDecodeError) as erro:
+        except UnicodeDecodeError:
+            try:
+                return json.loads(self.conteudo.decode("latin-1"))
+            except (UnicodeDecodeError, json.JSONDecodeError) as erro:
+                raise FalhaDeRede(f"resposta de {self.url} não é JSON válido: {erro}") from erro
+        except json.JSONDecodeError as erro:
             raise FalhaDeRede(f"resposta de {self.url} não é JSON válido: {erro}") from erro
 
     def texto(self) -> str:
-        """Corpo como texto — usado por CSV e HTML."""
-        return self.conteudo.decode("utf-8", errors="replace")
+        """Corpo como texto — usado por CSV e HTML.
+
+        Mesma regra do JSON: UTF-8 quando der, Latin-1 quando o servidor
+        antigo exigir. `errors="replace"` fica só como última rede de proteção.
+        """
+        try:
+            return self.conteudo.decode("utf-8")
+        except UnicodeDecodeError:
+            return self.conteudo.decode("latin-1", errors="replace")
 
 
 class ClienteHTTP:

@@ -1,202 +1,206 @@
 # Brasil Saúde
 
-![Python](https://img.shields.io/badge/python-3.11%2B-blue)
+![Python](https://img.shields.io/badge/python-3.13%2B-blue)
 ![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-green)
 ![Status](https://img.shields.io/badge/status-funcional%20(local)-brightgreen)
+![Testes](https://img.shields.io/badge/testes-82%20verdes-brightgreen)
 
-Um painel público que responde, com fonte em cada número: **qual a situação da
-dengue no meu estado, isso é anômalo, houve repasse federal e quem responde por
-isso?**
+Um painel público que responde, com fonte em cada número: **qual a situação da dengue no
+meu estado, isso é anômalo, quanto o governo federal repassou, quais programas foram
+ofertados e quem governava quando tudo isso aconteceu?**
 
-Não é um repositório de scripts. É uma interface que abre no navegador, mostra
-o mapa do Brasil, a série semanal com a faixa esperada pelo EARS, os repasses
-da função Saúde e as condições climáticas dos municípios com maior incidência.
-Todo dado exibido carrega órgão, URL, período e data de coleta.
+Não é um repositório de scripts. É uma interface que abre no navegador, mostra o mapa do
+Brasil, a série semanal com o limite do EARS, os repasses da função Saúde, a oferta de
+programas federais, o aproveitamento por estado e o contexto político do período. Todo
+dado exibido carrega órgão, URL, período de referência e data de coleta.
 
 ## Classificação
 
 | Dimensão | Valor |
 |----------|-------|
 | **Propósito** | `utilidade` · `estudo` · `portfólio` |
-| **Maturidade** | `funcional (local)` |
-| **O que estou treinando** | dados públicos de saúde, modelagem, EARS, FastAPI, SQLite, DBA, autorização |
-| **Quem usaria** | conselhos de saúde, jornalistas de dados, gestores municipais/estaduais, pesquisadores |
+| **Maturidade** | `funcional (local e rede doméstica)` |
+| **O que estou treinando** | dados públicos de saúde, EARS, FastAPI, SQLite, DBA, autorização, frontend sem framework |
+| **Quem usaria** | conselhos de saúde, jornalistas de dados, gestores municipais e estaduais, pesquisadores |
 
-> A maturidade é `funcional (local)` porque o painel roda e mostra dado real,
-> mas não está publicado: sem HTTPS, sem deploy e sem autenticação de produção.
+> A maturidade é `funcional (local)` porque o painel roda com dado real, mas não está
+> publicado na internet: sem HTTPS, sem deploy e sem autenticação de produção.
 
 ## Capturas
 
-![Mapa do Brasil com a incidência de dengue por estado e legenda de cores](docs/img/01-mapa.png)
+![Panorama por estado com mapa coroplético, série semanal em barras e bloco de responsáveis](docs/img/01-panorama.png)
 
-*Mapa por incidência na última semana consolidada (2026-SE40), com cinza para
-estado sem dado e borda tracejada para anomalia estatística.*
+*Panorama: mapa por incidência na última semana consolidada (2026-SE40), série de 30
+semanas em barras com a linha do limite EARS, repasses dos 12 meses e quem ocupava os
+cargos no período.*
 
-![Série semanal de casos com faixa esperada e limite do EARS](docs/img/02-serie.png)
+![Ranking de incidência por estado e tabela completa da semana](docs/img/02-estados.png)
 
-*Ao escolher o estado: casos da semana, faixa esperada, gráfico com observado,
-esperado e limite — e a explicação de que anomalia não é diagnóstico.*
+*Comparação entre estados: barra por incidência e tabela com casos, taxa e situação.
+No celular a tabela vira lista de cartões, sem rolagem lateral.*
 
-![Gráfico mensal de repasses e lista dos últimos lançamentos](docs/img/03-repasses.png)
+![Programas federais ofertados, valor planejado por estado e tabela de propostas](docs/img/03-subsidios.png)
 
-*Repasses da função Saúde: soma mensal, últimos lançamentos com link para a
-fonte e aviso de que o painel não afirma causalidade.*
+*Subsídios: 75 programas ofertados em 2026 pelos Ministérios da Saúde e das Cidades,
+valor planejado por estado e tabela de propostas por eixo.*
 
-![Lista de municípios com incidência, chuva e responsável estadual](docs/img/04-clima.png)
+![Linha do tempo dos ministros da Saúde e mosaico de governadores por partido](docs/img/04-contexto.png)
 
-*Clima nos municípios com maior incidência (chuva de 7 dias) e o responsável
-legal pelo SUS estadual, com link para a fonte.*
+*Contexto político: quem ocupou o Ministério da Saúde desde 2019 e o partido de cada
+governador do mandato 2023–2026. Cargo, nome, partido, período e fonte — sem juízo.*
 
-![Tabela de fontes com órgão, período, data de coleta e situação](docs/img/05-fontes.png)
+![Mesmo painel em tela de celular, sem rolagem horizontal](docs/img/05-celular.png)
 
-*“Fontes e Metodologia” lê o banco: órgão, período, data de coleta e situação
-de cada fonte — sem texto fixo no HTML.*
+*No celular (390 × 844 px): mapa, cartões e gráfico empilhados, tabelas convertidas em
+cartões e menu com rolagem própria. Verificado por script: `scrollWidth` igual a
+`clientWidth` em 390, 768 e 1440 px.*
 
 ## Como rodar
 
-Requisitos: Python 3.11+ e Git. O projeto foi testado no Python 3.14/Windows.
-
 ```powershell
-cd D:\Projetos\brasil_saude
-python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-
-# 1. coleta (IBGE, dengue, capitais, repasses, clima, responsáveis, EARS)
-python scripts/coletar.py tudo
-
-# 2. abra o painel
-python -m uvicorn src.app:app --host 127.0.0.1 --port 8000
-# http://127.0.0.1:8000  ·  API em /api/docs
+python scripts/coletar.py tudo          # coleta e grava no SQLite local
+python -m uvicorn src.app:app --port 8000
 ```
 
-Verificação:
+Abra <http://127.0.0.1:8000>. Documentação interativa da API em `/api/docs`.
+
+### Ver pelo celular (mesma rede Wi-Fi)
 
 ```powershell
-python -m pytest -q          # 63 testes
-python -m ruff check .       # lint
-python scripts/backup_sqlite.py criar
-python -m pytest tests/test_backup.py -q
+python scripts/servir_rede.py
 ```
 
-## Arquitetura
+O script libera a porta no firewall (perfil de rede privada), descobre o IPv4 da máquina
+e imprime o endereço pronto — por exemplo `http://192.168.3.73:8000`. Nada é exposto na
+internet: não há redirecionamento de porta nem túnel.
 
-```
-frontend/ (HTML/CSS/JS, sem build)
-        │  /api/estados, /repasses, /clima, /responsaveis, /fontes
-        ▼
-src/app.py (FastAPI)
-   ├── src/servicos/epidemiologia.py  → série, lacunas, EARS
-   ├── src/servicos/orcamento.py      → repasses por UF
-   ├── src/servicos/clima.py          → incidência + chuva
-   └── src/servicos/…                 → (MDSOA: um serviço por domínio)
-        ▼
-data/brasil_saude.db (SQLite + WAL) ← backup verificado
-```
-
-- **Coleta:** `src/fontes/` (IBGE, InfoDengue, Portal da Transparência, INMET/Open-Meteo).
-- **Proveniência:** tabela `fonte`; caso sem fonte é recusado por chave estrangeira.
-- **Metodologia:** EARS C1/C2 em `src/ears.py`, com exemplo canônico nos testes.
-- **Fase 2 (identidade):** RBAC/ABAC local em `src/auth/` e
-  [`docs/arquitetura/`](docs/arquitetura/README.md).
-
-## Fontes e metodologia
-
-| Dimensão | Fonte | O que entra | Período |
-|---|---|---|---|
-| Território/população | IBGE (localidades e Censo 2022) | 27 UFs, 5.571 municípios | vigente |
-| Dengue | SINAN agregado pelo InfoDengue (Fiocruz) | notificações por UF/semana | últimas 51 semanas |
-| Dengue municipal | InfoDengue `alertcity` | capitais (incidência) | 2 anos |
-| Repasses | Portal da Transparência/SIAFI | função 10 (Saúde), por UF/mês | 12 meses |
-| Estações | INMET | cadastro (nome, UF, coordenadas, IBGE) | vigente |
-| Chuva/temperatura | Open-Meteo (**fallback declarado**) | série diária nas coordenadas da estação | 14 dias |
-| Responsáveis | curadoria com verificação pública | governadores 2023–2027 | mandato |
-
-O EARS compara a semana com a média e o desvio-padrão das **sete semanas
-anteriores** (média + 3 desvios na C1; C2 ignora as duas semanas mais recentes).
-A tela sempre mostra a faixa esperada junto do observado e diz **“anomalia
-estatística”**, nunca “surto”.
-
-## Segurança e Privacidade
-
-**DICA aplicado (COSEGI):**
-
-- **Disponibilidade:** cache local, retry com backoff, fallback de fonte,
-  falha parcial tolerada, backup com restauração testada.
-- **Integridade:** FK obrigatória para `fonte`, `CHECK` de faixa, transação por
-  lote, lacuna marcada como `None` (não zero).
-- **Confidencialidade:** nenhum dado pessoal. A menor célula é município ×
-  semana; não há nome, CPF, CNS, endereço ou e-mail no banco. O protótipo de
-  e-mail guarda UF e papel, **não** destinatário.
-- **Autenticidade:** cada número tem URL da fonte e data de coleta visíveis.
-
-**Superfície:** API somente leitura no painel público; CORS restrito a origens
-locais; corpo limitado a 1 MB; UF validada no servidor; frontend usa
-`textContent` (sem `innerHTML` com dado da rede).
-
-**O que falta para produção:** HTTPS, rate limit, auditoria de acesso, MFA,
-revisão de dependências e teste de intrusão. Está declarado em
-[`docs/dba/seguranca_dados.md`](docs/dba/seguranca_dados.md).
-
-## Fase 2 — identidade, acesso e serviços
-
-Protótipo funcional de autorização com três papéis (`publico`,
-`gestor_estadual`, `admin`). O critério de sucesso é testado: **gestor de SP
-recebe 403 ao pedir dados de RJ**.
-
-- [`docs/arquitetura/matriz_permissoes.md`](docs/arquitetura/matriz_permissoes.md)
-- [`docs/arquitetura/integracao_servicos.md`](docs/arquitetura/integracao_servicos.md)
-  (e-mail multi-tenant, gov.br OIDC, MFA, DATASUS)
+### Comandos do dia a dia
 
 ```powershell
-$env:BRASIL_SAUDE_AUTH_DEMO = "1"
-# POST /api/auth/demo-token {"papel":"gestor_estadual","uf":"SP"}
-# GET  /api/gestao/estados/SP/resumo   -> 200
-# GET  /api/gestao/estados/RJ/resumo   -> 403
+python -m pytest -q                 # suíte completa
+python -m ruff check .              # lint
+python scripts/backup_sqlite.py backup
+python scripts/backup_sqlite.py restaurar data/backups/<arquivo>.db
 ```
 
-## Limitações declaradas
+## O que deu certo
 
-- **Sem deploy público** e sem HTTPS: roda localmente.
-- **Dengue apenas.** Zika e chikungunya estão no backlog.
-- **Sem microdado restrito.** A série vem agregada; não há acesso ao SINAN
-  nominal (que exigiria Termo, certificado e CNES).
-- **Clima:** a série do INMET exige token (HTTP 204 sem autenticação); os
-  valores vêm do Open-Meteo, e a tela diz isso.
-- **Secretários estaduais de saúde** ainda não são coletados (CONASS carrega a
-  lista via JavaScript sem endpoint estável). O painel mostra o governador e
-  avisa a lacuna.
-- **Sem dado pessoal:** por decisão de projeto, não por falta de vontade.
+- **Coleta real, sem dado inventado.** 27 UFs, 5.571 municípios, 51 semanas de dengue por
+  estado, R$ 187,8 bilhões de repasses federais em 12 meses, 268 estações de clima,
+  75 programas federais em 2026 e 84 em 2025, 6 ministros da Saúde e 27 governadores.
+- **Proveniência obrigatória.** Toda tabela aponta para uma linha de `fonte` com órgão,
+  URL, período e data de coleta. A tela de fontes mostra 7 de 8 fontes com status `ok`.
+- **EARS com teste canônico.** C1 (7 semanas, k=3) e C2 (janela deslocada) calculados do
+  zero, com exemplo documentado em `tests/test_ears.py`.
+- **Lacuna não é zero.** Semana não publicada entra como `None`, aparece como buraco no
+  gráfico e como "sem dado" na tabela.
+- **Frontend sem framework e sem CDN.** Zero requisição a terceiros: nenhum CDN, nenhuma
+  fonte externa, nenhum script de análise. Mapa, gráfico de barras e ranking são SVG e
+  HTML gerados no navegador.
+- **Responsivo de verdade.** Layout verificado em 390, 768 e 1440 px sem rolagem
+  horizontal (`scrollWidth == clientWidth`).
+- **Política de dados publicada** em `/privacidade` e em `docs/politica_dados.md`.
+- **Autorização da Fase 2.** RBAC/ABAC local com papéis `admin`, `gestor_estadual` e
+  `publico`; `gestor_estadual` recebe 403 ao pedir outro estado. Sem login no MVP.
+- **Backup e restauração com prova.** Cópia pela API do SQLite, `integrity_check`,
+  SHA-256 e restauração conferida byte a byte.
+- **82 testes verdes e `ruff` limpo**, com CI no GitHub Actions.
+
+## O que não foi alcançado
+
+| Item | Por que ficou de fora |
+| --- | --- |
+| Outras doenças (chikungunya, zika) | a API do InfoDengue responde (validado), mas exige coluna `doenca` no esquema e recálculo do EARS por doença — virou ciclo do roadmap, não do MVP |
+| Internações, SRAG e óbitos | dependem de bases anuais grandes do OpenDataSUS (SIH/SUS), sem recorte por UF pronto |
+| Queimadas e fumaça | o INPE passou a exigir cadastro/token para o CSV por estado |
+| Desastres (enchentes do RS) | o S2iD/MIDR não tem API aberta documentada; o dado existe em planilha e relatório |
+| Obras por esfera (federal/estadual/municipal) | temos proposta e valor planejado; execução física e esfera exigem o Obrasgov |
+| Saneamento (SNIS) | diagnóstico anual em planilha; fora do escopo do ciclo |
+| Prefeitos por município | 5.570 registros; exige curadoria e cuidado extra com privacidade |
+| Correlação chuva → dengue | a série de clima publicada cobre 14 dias por estação; correlação honesta precisa de anos de série diária |
+| Autenticação de produção | o MVP é leitura pública; login com MFA é Fase 3 (`docs/arquitetura/`) |
+| Deploy público | proibido no contrato do MVP |
+
+## Por que demorou mais que o previsto
+
+1. **Fontes que não entregam o que prometem.** O PySUS não instala no Python 3.14 (sem
+   wheel para `pyreaddbc`); a API de dados abertos do Ministério da Saúde responde com
+   paginação instável; o INMET responde 204 no endpoint de série por estação; o
+   `mailtura.com` sugerido como serviço de e-mail é um site de apostas, não um relay.
+2. **Formato de governo é formato de governo.** CSV em Latin-1, JSON que devolve acento
+   sem declarar charset (o Transferegov faz isso), coluna de função do Portal da
+   Transparência com 36 posições e separador `;`.
+3. **Semana epidemiológica brasileira não é semana ISO.** SE1 é a semana que contém
+   4 de janeiro, domingo a sábado. Usar ISO erra o ano em toda virada.
+4. **Refazer o frontend depois de ver o resultado.** A primeira versão tinha grid sem
+   `minmax(0, 1fr)` e um `<select>` dimensionado pela opção mais longa — o resultado era
+   rolagem horizontal e sensação de "mobile e desktop ao mesmo tempo".
+5. **Defeitos silenciosos que só apareceram na verificação visual.** O mapa pintava
+   todos os estados de cinza porque a UF era gravada antes de os dados chegarem; e a
+   projeção de Mercator devolvia radianos enquanto a longitude estava em graus, o que
+   achatava o Brasil em 2 px de altura. Nenhum dos dois quebrava teste.
+
+## O que fazer agora
+
+1. Chikungunya e zika (fonte já validada; falta esquema e seletor).
+2. Série diária longa de clima por estado — destrava a correlação com a dengue.
+3. Obrasgov e SNIS: quanto foi destinado, quanto foi executado.
+4. Internações (SIH/SUS) para falar de gravidade, não só de notificação.
+5. Fase 3 de identidade: gov.br (OAuth2/OIDC) e MFA para acesso administrativo.
+
+O detalhamento de cada item, com a fonte candidata e o obstáculo, está em
+[`docs/roadmap_dados.md`](docs/roadmap_dados.md).
+
+## Como o painel é montado
+
+```text
+scripts/coletar.py  →  src/fontes/*  →  SQLite (data/brasil_saude.db)  →  src/servicos/*  →  FastAPI  →  frontend/
+```
+
+| Camada | Arquivo | Papel |
+| --- | --- | --- |
+| Coleta | `src/fontes/{ibge,infodengue,inmet,transparencia,transferegov,responsaveis}.py` | baixa, normaliza e grava com carimbo de data |
+| Rede | `src/rede.py` | retry com espera crescente, decodificação UTF-8 com queda para Latin-1 |
+| Detecção | `src/ears.py` | C1 e C2, janela móvel, desvio amostral |
+| Serviços | `src/servicos/*` | regra de negócio: série, incidência, repasses, subsídios, contexto |
+| API | `src/rotas/*` | contrato JSON tipado, 422 para UF inválida, 503 para fonte fora do ar |
+| Tela | `frontend/` | HTML, CSS e JS puros; SVG gerado no cliente |
+
+### Endpoints principais
+
+| Rota | O que devolve |
+| --- | --- |
+| `GET /api/resumo` | números do topo: casos da semana, anomalias em 12 semanas, repasses, fontes |
+| `GET /api/estados?metodo=C1` | situação da última semana por UF (alimenta o mapa) |
+| `GET /api/estados/{uf}` | série com esperado e limite do EARS |
+| `GET /api/estados/{uf}/repasses` | repasses federais da função Saúde |
+| `GET /api/estados/{uf}/clima` | chuva e temperatura por município |
+| `GET /api/estados/{uf}/contexto` | governador, presidente e ministros do período |
+| `GET /api/subsidios?ano=2026` | programas ofertados e propostas por UF |
+| `GET /api/contexto` | linha do tempo de ministros e governadores |
+| `GET /api/fontes` | proveniência de tudo que aparece na tela |
+
+## Segurança e privacidade
+
+- Nenhum segredo em arquivo versionado; a chave vive em variável de ambiente.
+- API somente leitura, CORS restrito à própria origem, corpo limitado a 1 MB.
+- Nenhum cookie, nenhum rastreador, nenhuma requisição a terceiros no navegador.
+- Dado de saúde sempre agregado por semana e por estado: não há registro individual.
+- Política completa em [`docs/politica_dados.md`](docs/politica_dados.md) e em `/privacidade`.
 
 ## Loop Engineering
 
-Cada etapa foi um ciclo: hipótese → mudança → teste → métrica real →
-**ACEITO/REJEITADO** em [`log_loop.md`](log_loop.md). O diário didático está em
-[`DIARIO.md`](DIARIO.md); as decisões, em [`NOTES.md`](NOTES.md); a modelagem,
-em [`docs/modelagem.md`](docs/modelagem.md).
+Cada ciclo é uma hipótese pequena, medida e aceita ou revertida. O registro está em
+[`log_loop.md`](log_loop.md), as decisões em [`NOTES.md`](NOTES.md) e o passo a passo em
+[`DIARIO.md`](DIARIO.md).
 
-## 🚀 Convite à interação
+## Contribuições
 
-**Iniciantes:** há tarefas pequenas e bem delimitadas no
-[`docs/backlog.md`](docs/backlog.md) — melhorar uma mensagem de erro, escrever
-um teste, corrigir uma explicação. Eu reviso e ajudo.
+Achou um número errado? Abra uma issue com o valor, a semana e a fonte oficial que
+contradiz o painel. Correção de dado de saúde é sempre resolvida a favor do boletim
+oficial.
 
-**Colegas de dados e programação:** encontrou número sem fonte, gargalo ou
-brecha? Abra uma Issue ou PR. Discussão técnica é bem-vinda, inclusive quando
-discorda de uma decisão registrada.
+## Licença
 
-**Recrutadores:** o que está aqui é verificável — suíte de testes, backup
-restaurado, documentação de DBA e um protótipo de autorização que bloqueia
-acesso cruzado entre estados.
-
-## Apoio
-
-- **PIX:** `a8b68e14-edfe-4450-88f2-c2af4aca2a6c`
-- **Buy Me a Coffee:** <https://buymeacoffee.com/georgehbecker>
-- **LinkedIn:** <https://www.linkedin.com/in/georgehbecker/>
-
-## Topics sugeridos
-
-```text
-python fastapi sqlite dados-publicos saude-sus dengue ears datasus lgpd loop-engineering transparencia
-```
+MIT. Os dados pertencem às instituições que os publicam; o código é livre.

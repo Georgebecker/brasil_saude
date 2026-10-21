@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Política de tratamento de dados do painel Brasil Saúde: o que é coletado, com que base legal, por quanto tempo e como exercer seus direitos (LGPD).">
+<meta name="theme-color" content="#0b2545">
+<meta name="color-scheme" content="light">
+<title>Política de tratamento de dados — Brasil Saúde</title>
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+<header class="topo">
+  <div class="topo__interno">
+    <a class="marca" href="/" aria-label="Brasil Saúde, página inicial">
+      <span class="marca__sinal" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="32" height="32" role="presentation">
+          <rect x="1" y="1" width="30" height="30" rx="9" fill="currentColor" opacity=".14"/>
+          <path d="M6 20.5h4.2l2.3-7 3.4 11 3-8.6 1.6 4.6H26" fill="none" stroke="currentColor"
+                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span class="marca__texto">
+        <strong>Brasil Saúde</strong>
+        <small>vigilância e responsabilização</small>
+      </span>
+    </a>
+    <nav class="nav" aria-label="Seções do painel">
+      <a href="/#panorama">Panorama</a>
+      <a href="/#estados">Estados</a>
+      <a href="/#subsidios">Subsídios</a>
+      <a href="/#fontes">Fontes</a>
+      <a href="/privacidade" aria-current="page">Privacidade</a>
+    </nav>
+  </div>
+</header>
+
+<main id="conteudo">
+  <section class="secao" style="max-width: 980px;">
+    <header class="secao__cabecalho">
+      <div>
+        <p class="secao__rotulo">Transparência</p>
+        <h1 style="font-size: var(--texto-titulo); color: var(--marinho);">Política de tratamento de dados</h1>
+        <p class="secao__lead">
+          Em vigor desde a publicação do painel. Última revisão registrada no repositório
+          (<code>docs/politica_dados.md</code>), junto com o histórico de alterações.
+        </p>
+      </div>
+    </header>
+
+    <article class="cartao metodologia">
+      <div class="metodologia__grade">
+        <div>
+          <h4>1. Quem somos</h4>
+          <p>
+            O Brasil Saúde é um painel público e de código aberto. Não há empresa coletando
+            dados: a aplicação roda em servidor próprio do mantenedor do projeto e entrega
+            apenas conteúdo estático e uma API de leitura.
+          </p>
+        </div>
+        <div>
+          <h4>2. O que não coletamos</h4>
+          <p>
+            Não há cadastro, login, cookie, pixel, biblioteca de terceiros, fonte externa de
+            tipografia ou qualquer script de análise. O servidor registra apenas a linha de
+            acesso padrão (data, endereço, rota e código de resposta) em arquivo local, sem
+            perfilamento e sem cruzamento com outras bases.
+          </p>
+        </div>
+        <div>
+          <h4>3. Dados de saúde exibidos</h4>
+          <p>
+            Todos os números de dengue são <strong>agregados por semana epidemiológica e por
+            estado</strong>. Nenhum registro individual, nome, data de nascimento, endereço ou
+            número de notificação aparece na tela ou na API. Dado individual identificável não
+            é coletado, não é armazenado e não é publicado.
+          </p>
+        </div>
+        <div>
+          <h4>4. Base legal e finalidade</h4>
+          <p>
+            O tratamento se apoia no art. 7º, § 3º, da LGPD (dados tornados manifestamente
+            públicos pela fonte original) e no art. 7º, IV (acesso a informação pública). A
+            finalidade é única: vigilância cidadã e responsabilização por recursos públicos em
+            saúde. Nenhum dado é usado para publicidade, ranqueamento comercial ou perfilamento.
+          </p>
+        </div>
+        <div>
+          <h4>5. Origem dos dados</h4>
+          <p>
+            IBGE (território e população), InfoDengue/Fiocruz a partir do SINAN (dengue),
+            INMET e Open-Meteo (clima), Portal da Transparência/CGU (repasses federais) e
+            Transferegov (programas e propostas). Cada bloco da tela informa a fonte, o período
+            de referência e a data de coleta.
+          </p>
+        </div>
+        <div>
+          <h4>6. Retenção</h4>
+          <p>
+            As séries coletadas ficam no banco local do projeto, com cópia de segurança
+            versionada por data. Dado antigo é mantido para comparação histórica; quando uma
+            fonte corrige um valor, a coleta nova substitui o registro e o log registra a data
+            da substituição.
+          </p>
+        </div>
+        <div>
+          <h4>7. Direitos do titular</h4>
+          <p>
+            Como o painel não guarda dado pessoal, não há titular a identificar nas telas.
+            Ainda assim, qualquer pessoa pode pedir esclarecimento, correção de número ou
+            remoção de conteúdo por meio de uma <em>issue</em> no repositório público do
+            projeto. Pedidos de correção de dado de saúde são encaminhados à fonte original,
+            porque é ela quem publica.
+          </p>
+        </div>
+        <div>
+          <h4>8. Segurança</h4>
+          <p>
+            Segredos ficam fora do repositório (variável de ambiente ou arquivo local não
+            versionado); a API é somente leitura; o CORS aceita apenas a própria origem; o
+            corpo das requisições tem limite de 1 MB; e as dependências são verificadas antes
+            de cada publicação.
+          </p>
+        </div>
+        <div>
+          <h4>9. Contato e revisão</h4>
+          <p>
+            Dúvida, correção ou denúncia: abra uma <em>issue</em> em
+            <a href="https://github.com/Georgebecker/brasil_saude" rel="noopener noreferrer">github.com/Georgebecker/brasil_saude</a>.
+            Esta política é revisada a cada mudança de fonte ou de arquitetura.
+          </p>
+        </div>
+        <div>
+          <h4>10. Limitação declarada</h4>
+          <p>
+            O painel não substitui a leitura oficial da Secretaria de Vigilância em Saúde.
+            Divergência entre o painel e o boletim oficial resolve-se sempre a favor do
+            boletim oficial.
+          </p>
+        </div>
+      </div>
+    </article>
+
+    <p><a class="botao" href="/">Voltar ao painel</a></p>
+  </section>
+</main>
+
+<footer class="rodape">
+  <div class="rodape__interno">
+    <div>
+      <p class="rodape__marca">Brasil Saúde</p>
+      <p class="rodape__texto">
+        Painel público de vigilância e responsabilização em saúde. Código aberto,
+        sem rastreamento e sem cookies.
+      </p>
+    </div>
+    <nav class="rodape__links" aria-label="Links do rodapé">
+      <a href="/privacidade">Política de tratamento de dados</a>
+      <a href="/api/docs">Documentação da API</a>
+      <a href="/api/fontes">Fontes em JSON</a>
+      <a href="/#metodologia">Metodologia</a>
+    </nav>
+  </div>
+  <p class="rodape__fino">
+    Dados públicos. Nenhuma informação pessoal identificável é coletada, processada ou exibida.
+  </p>
+</footer>
+</body>
+</html>

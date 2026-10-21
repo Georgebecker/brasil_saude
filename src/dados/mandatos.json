@@ -1,0 +1,128 @@
+{
+  "_nota": "Curadoria manual de quem ocupou cargos de governo no período coberto pelos dados do painel. Cada entrada tem período de exercício e partido ao lado do nome; o objetivo é permitir que o leitor saiba a quem atribuir a decisão, não emitir juízo sobre ela. Partido indica a legenda pelo qual o titular foi eleito ou aquela a que estava filiado no início do mandato.",
+  "_validado_em": "2026-10-21",
+  "_limitacao": "A lista de governadores cobre o mandato 2023-2026, que é o período dos dados de dengue, repasses e subsídios hoje publicados. Mandatos estaduais anteriores (2019-2022) ainda não foram curados; a lacuna está declarada em NOTES.md.",
+  "_fontes": [
+    {
+      "id": "planalto_galeria",
+      "nome": "Galeria de ex-presidentes e composição ministerial",
+      "orgao": "Presidência da República",
+      "url": "https://www.gov.br/planalto/pt-br"
+    },
+    {
+      "id": "saude_galeria_ministros",
+      "nome": "Galeria de ministros da Saúde",
+      "orgao": "Ministério da Saúde",
+      "url": "https://www.gov.br/saude/pt-br/composicao"
+    },
+    {
+      "id": "tse_eleicoes",
+      "nome": "Resultados eleitorais e filiação partidária",
+      "orgao": "Tribunal Superior Eleitoral",
+      "url": "https://www.tse.jus.br/eleicoes"
+    },
+    {
+      "id": "governadores_2023_2026",
+      "nome": "Lista de governadores das unidades federativas (2023-2026)",
+      "orgao": "Wikipédia (conferência cruzada com os sites oficiais de cada estado)",
+      "url": "https://pt.wikipedia.org/wiki/Lista_de_governadores_das_unidades_federativas_do_Brasil_(2023%E2%80%932027)"
+    }
+  ],
+  "presidentes": [
+    {
+      "nome": "Jair Bolsonaro",
+      "partido": "PL",
+      "inicio": "2019-01-01",
+      "fim": "2022-12-31",
+      "periodo": "01/01/2019 a 31/12/2022",
+      "url_fonte": "https://www.gov.br/planalto/pt-br"
+    },
+    {
+      "nome": "Luiz Inácio Lula da Silva",
+      "partido": "PT",
+      "inicio": "2023-01-01",
+      "fim": "2026-12-31",
+      "periodo": "01/01/2023 a 31/12/2026",
+      "url_fonte": "https://www.gov.br/planalto/pt-br"
+    }
+  ],
+  "ministros_saude": [
+    {
+      "nome": "Luiz Henrique Mandetta",
+      "partido": "DEM",
+      "inicio": "2019-01-01",
+      "fim": "2020-04-16",
+      "periodo": "01/01/2019 a 16/04/2020",
+      "url_fonte": "https://www.gov.br/saude/pt-br/composicao"
+    },
+    {
+      "nome": "Nelson Teich",
+      "partido": "sem partido",
+      "inicio": "2020-04-17",
+      "fim": "2020-05-15",
+      "periodo": "17/04/2020 a 15/05/2020",
+      "url_fonte": "https://www.gov.br/saude/pt-br/composicao"
+    },
+    {
+      "nome": "Eduardo Pazuello",
+      "partido": "sem partido",
+      "inicio": "2020-05-16",
+      "fim": "2021-03-23",
+      "periodo": "16/05/2020 a 23/03/2021",
+      "url_fonte": "https://www.gov.br/saude/pt-br/composicao"
+    },
+    {
+      "nome": "Marcelo Queiroga",
+      "partido": "sem partido",
+      "inicio": "2021-03-23",
+      "fim": "2022-12-31",
+      "periodo": "23/03/2021 a 31/12/2022",
+      "url_fonte": "https://www.gov.br/saude/pt-br/composicao"
+    },
+    {
+      "nome": "Nísia Trindade",
+      "partido": "sem partido",
+      "inicio": "2023-01-01",
+      "fim": "2025-03-10",
+      "periodo": "01/01/2023 a 10/03/2025",
+      "url_fonte": "https://www.gov.br/saude/pt-br/composicao"
+    },
+    {
+      "nome": "Alexandre Padilha",
+      "partido": "PT",
+      "inicio": "2025-03-11",
+      "fim": "2026-12-31",
+      "periodo": "11/03/2025 a 31/12/2026",
+      "url_fonte": "https://www.gov.br/saude/pt-br/composicao"
+    }
+  ],
+  "governadores": [
+    {"uf": "AC", "nome": "Gladson Cameli", "partido": "PP", "periodo": "2023-2026", "url_fonte": "https://www.ac.gov.br"},
+    {"uf": "AL", "nome": "Paulo Dantas", "partido": "MDB", "periodo": "2023-2026", "url_fonte": "https://www.al.gov.br"},
+    {"uf": "AP", "nome": "Clécio Luís", "partido": "SOLIDARIEDADE", "periodo": "2023-2026", "url_fonte": "https://www.ap.gov.br"},
+    {"uf": "AM", "nome": "Wilson Lima", "partido": "UNIÃO", "periodo": "2023-2026", "url_fonte": "https://www.am.gov.br"},
+    {"uf": "BA", "nome": "Jerônimo Rodrigues", "partido": "PT", "periodo": "2023-2026", "url_fonte": "https://www.ba.gov.br"},
+    {"uf": "CE", "nome": "Elmano de Freitas", "partido": "PT", "periodo": "2023-2026", "url_fonte": "https://www.ce.gov.br"},
+    {"uf": "DF", "nome": "Ibaneis Rocha", "partido": "MDB", "periodo": "2023-2026", "url_fonte": "https://www.df.gov.br"},
+    {"uf": "ES", "nome": "Renato Casagrande", "partido": "PSB", "periodo": "2023-2026", "url_fonte": "https://www.es.gov.br"},
+    {"uf": "GO", "nome": "Ronaldo Caiado", "partido": "UNIÃO", "periodo": "2023-2026", "url_fonte": "https://www.go.gov.br"},
+    {"uf": "MA", "nome": "Carlos Brandão", "partido": "PSB", "periodo": "2023-2026", "url_fonte": "https://www.ma.gov.br"},
+    {"uf": "MT", "nome": "Mauro Mendes", "partido": "UNIÃO", "periodo": "2023-2026", "url_fonte": "https://www.mt.gov.br"},
+    {"uf": "MS", "nome": "Eduardo Riedel", "partido": "PSDB", "periodo": "2023-2026", "url_fonte": "https://www.ms.gov.br"},
+    {"uf": "MG", "nome": "Romeu Zema", "partido": "NOVO", "periodo": "2023-2026", "url_fonte": "https://www.mg.gov.br"},
+    {"uf": "PA", "nome": "Helder Barbalho", "partido": "MDB", "periodo": "2023-2026", "url_fonte": "https://www.pa.gov.br"},
+    {"uf": "PB", "nome": "João Azevêdo", "partido": "PSB", "periodo": "2023-2026", "url_fonte": "https://paraiba.pb.gov.br"},
+    {"uf": "PR", "nome": "Ratinho Júnior", "partido": "PSD", "periodo": "2023-2026", "url_fonte": "https://www.pr.gov.br"},
+    {"uf": "PE", "nome": "Raquel Lyra", "partido": "PSDB", "periodo": "2023-2026", "url_fonte": "https://www.pe.gov.br"},
+    {"uf": "PI", "nome": "Rafael Fonteles", "partido": "PT", "periodo": "2023-2026", "url_fonte": "https://www.pi.gov.br"},
+    {"uf": "RJ", "nome": "Cláudio Castro", "partido": "PL", "periodo": "2023-2026", "url_fonte": "https://www.rj.gov.br"},
+    {"uf": "RN", "nome": "Fátima Bezerra", "partido": "PT", "periodo": "2023-2026", "url_fonte": "https://www.rn.gov.br"},
+    {"uf": "RS", "nome": "Eduardo Leite", "partido": "PSDB", "periodo": "2023-2026", "url_fonte": "https://www.rs.gov.br"},
+    {"uf": "RO", "nome": "Coronel Marcos Rocha", "partido": "UNIÃO", "periodo": "2023-2026", "url_fonte": "https://www.ro.gov.br"},
+    {"uf": "RR", "nome": "Antonio Denarium", "partido": "PP", "periodo": "2023-2026", "url_fonte": "https://www.rr.gov.br"},
+    {"uf": "SC", "nome": "Jorginho Mello", "partido": "PL", "periodo": "2023-2026", "url_fonte": "https://www.sc.gov.br"},
+    {"uf": "SP", "nome": "Tarcísio de Freitas", "partido": "REPUBLICANOS", "periodo": "2023-2026", "url_fonte": "https://www.sp.gov.br"},
+    {"uf": "SE", "nome": "Fábio Mitidieri", "partido": "PSD", "periodo": "2023-2026", "url_fonte": "https://www.se.gov.br"},
+    {"uf": "TO", "nome": "Wanderlei Barbosa", "partido": "REPUBLICANOS", "periodo": "2023-2026", "url_fonte": "https://www.to.gov.br"}
+  ]
+}

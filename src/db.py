@@ -152,6 +152,33 @@ CREATE TABLE IF NOT EXISTS log_coleta (
     mensagem      TEXT
 );
 
+-- Programas federais disponibilizados para propostas (oferta de subsídio).
+CREATE TABLE IF NOT EXISTS subsidio_programa (
+    id_programa             INTEGER PRIMARY KEY,
+    orgao                   TEXT NOT NULL,
+    nome                    TEXT NOT NULL,
+    situacao                TEXT,
+    modalidade              TEXT,
+    data_disponibilizacao   TEXT,
+    inicio_recebimento      TEXT,
+    fim_recebimento         TEXT,
+    fonte_id                TEXT NOT NULL REFERENCES fonte(id)
+);
+
+-- Aproveitamento por UF: propostas apresentadas e valores planejados.
+CREATE TABLE IF NOT EXISTS subsidio_uf (
+    uf               TEXT NOT NULL REFERENCES uf(sigla),
+    ano              INTEGER NOT NULL,
+    eixo             TEXT NOT NULL,  -- saude_fundo_a_fundo | cidades_discricionaria
+    propostas        INTEGER NOT NULL DEFAULT 0,
+    aprovadas        INTEGER NOT NULL DEFAULT 0,
+    valor_planejado  REAL NOT NULL DEFAULT 0,
+    valor_repasse    REAL NOT NULL DEFAULT 0,
+    programas        INTEGER NOT NULL DEFAULT 0,
+    fonte_id         TEXT NOT NULL REFERENCES fonte(id),
+    PRIMARY KEY (uf, ano, eixo)
+);
+
 CREATE TABLE IF NOT EXISTS meta (
     chave  TEXT PRIMARY KEY,
     valor  TEXT NOT NULL

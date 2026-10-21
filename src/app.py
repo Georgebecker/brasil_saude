@@ -24,7 +24,16 @@ from fastapi.staticfiles import StaticFiles
 
 from src import config, db
 from src.rede import FalhaDeRede
-from src.rotas import clima, epidemiologia, fontes, gestao, orcamento, responsaveis
+from src.rotas import (
+    clima,
+    contexto,
+    epidemiologia,
+    fontes,
+    gestao,
+    orcamento,
+    responsaveis,
+    subsidios,
+)
 
 PASTA_FRONTEND = config.RAIZ / "frontend"
 LIMITE_CORPO_BYTES = 1_000_000
@@ -85,6 +94,8 @@ def create_app(caminho_banco: Path | None = None) -> FastAPI:
         clima.roteador,
         responsaveis.roteador,
         gestao.roteador,
+        subsidios.roteador,
+        contexto.roteador,
         fontes.roteador,
     ):
         app.include_router(roteador)
@@ -101,6 +112,11 @@ def create_app(caminho_banco: Path | None = None) -> FastAPI:
     def inicio() -> FileResponse:
         """Entrega o painel. A tela é HTML/CSS/JS puro, sem etapa de build."""
         return FileResponse(PASTA_FRONTEND / "index.html")
+
+    @app.get("/privacidade", include_in_schema=False)
+    def privacidade() -> FileResponse:
+        """Política de tratamento de dados (LGPD) — página estática."""
+        return FileResponse(PASTA_FRONTEND / "privacidade.html")
 
     @app.get("/favicon.ico", include_in_schema=False)
     def favicon() -> Response:

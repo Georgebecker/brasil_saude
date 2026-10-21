@@ -110,3 +110,45 @@ classificação do `README.md`.
 - **Medição:** alternância recarrega a série; `test_serie_aceita_a_variante_c2`
   cobre `metodo=C2`; ambos os métodos mostram faixa para o mesmo ponto.
 - **Decisão:** **ACEITO** — a tela deixa de esconder uma escolha metodológica.
+
+## Ciclo 11 — [loop] subsídios federais (Transferegov)
+
+- **Hipótese:** o painel mostra repasse, mas não mostra a **oferta** de programa; sem ela
+  o leitor não sabe se o estado deixou dinheiro na mesa.
+- **Mudança:** coletor `src/fontes/transferegov.py` (programas + propostas por UF),
+  tabelas `subsidio_programa` e `subsidio_uf`, serviço e rota `/api/subsidios`.
+- **Medição:** 75 programas em 2026 e 84 em 2025; 44.785 propostas de saúde e 1.621 do
+  eixo Cidades em 2026; 27 UFs sem coleta parcial.
+- **Defeito encontrado:** a API devolve JSON em Latin-1 sem declarar charset e os nomes
+  chegavam como "Processo n�". Correção em `src/rede.Resposta.json()` com queda para
+  Latin-1, coberta por teste.
+- **Decisão:** **ACEITO**.
+
+## Ciclo 12 — [loop] frontend responsivo e legível
+
+- **Hipótese:** a queixa de "mobile e desktop ao mesmo tempo" era layout, não conteúdo:
+  grid sem `minmax(0, 1fr)`, `<select>` dimensionado pela opção mais longa e tabela de 27
+  linhas em tela de 390 px.
+- **Mudança:** folha de estilo reescrita com `clamp()`, breakpoints em 900/700/620,
+  tabela convertida em cartões no celular, gráfico em barras com rótulo de semana
+  epidemiológica e mapa em SVG (sem CDN, sem Leaflet).
+- **Medição:** `scrollWidth == clientWidth` em 390, 768 e 1440 px; zero erro de console;
+  mapa com 26 de 27 estados coloridos.
+- **Defeitos encontrados na verificação visual (não quebravam teste):** (a) o mapa
+  gravava a UF antes de os dados chegarem e pintava tudo de cinza; (b) a projeção de
+  Mercator devolvia radianos enquanto a longitude estava em graus, achatando o Brasil em
+  2 px de altura.
+- **Decisão:** **ACEITO**.
+
+## Ciclo 13 — [loop] contexto político e acesso pelo celular
+
+- **Hipótese:** número sem responsável não responsabiliza; e o painel só no `localhost`
+  não é visto por ninguém.
+- **Mudança:** `src/dados/mandatos.json` (2 presidentes, 6 ministros, 27 governadores com
+  partido e fonte), rota `/api/contexto`, linha do tempo e mosaico por partido;
+  `src/dados/pos_mandato.json` com situação pós-mandato e o que falta conferir;
+  `scripts/servir_rede.py` para abrir na rede doméstica e imprimir o IP.
+- **Medição:** 82 testes verdes, `ruff` limpo, `/api/contexto` 200, painel acessível em
+  `http://192.168.3.73:8000` a partir de outro aparelho da rede.
+- **Decisão:** **ACEITO** — com a ressalva de que a situação pós-mandato só aparece
+  quando conferida; o resto é exibido como "não verificado".

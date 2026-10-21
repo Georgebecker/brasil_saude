@@ -32,11 +32,19 @@
     <nav class="nav" aria-label="Seções do painel">
       <a href="#panorama">Panorama</a>
       <a href="#estados">Estados</a>
+      <a href="#queimadas">Queimadas</a>
       <a href="#subsidios">Subsídios</a>
       <a href="#contexto">Contexto</a>
       <a href="#fontes">Fontes</a>
       <a href="/privacidade">Privacidade</a>
     </nav>
+
+    <!-- Indicador de rede: pulso verde quando o serviço responde, vermelho
+         quando não. O clique pede rearme ao vigia e mostra o IP recalculado. -->
+    <button class="rede" id="rede" type="button" aria-live="polite" title="Verificar a rede local">
+      <span class="rede__pulso" aria-hidden="true"></span>
+      <span class="rede__texto" id="rede-texto">verificando rede…</span>
+    </button>
   </div>
 </header>
 
@@ -85,6 +93,24 @@
             <option value="C2">EARS C2</option>
           </select>
         </label>
+        <label class="campo">
+          <span>Período</span>
+          <select id="seletor-granularidade">
+            <option value="semana">Semana</option>
+            <option value="mes" selected>Mês</option>
+            <option value="trimestre">Trimestre</option>
+            <option value="semestre">Semestre</option>
+            <option value="ano">Ano</option>
+          </select>
+        </label>
+        <label class="campo">
+          <span>De</span>
+          <select id="seletor-de"></select>
+        </label>
+        <label class="campo">
+          <span>Até</span>
+          <select id="seletor-ate"></select>
+        </label>
       </div>
     </header>
 
@@ -111,6 +137,11 @@
       </div>
     </header>
 
+    <div class="cartao">
+      <h3 class="cartao__titulo">Casos por período — <span id="agregado-uf">—</span></h3>
+      <div id="grafico-agregado"><p class="nota">Escolha um estado no mapa para ver a série agregada.</p></div>
+    </div>
+
     <div class="duas-colunas">
       <div class="cartao">
         <h3 class="cartao__titulo">Incidência por 100 mil habitantes</h3>
@@ -119,6 +150,42 @@
       <div class="cartao">
         <h3 class="cartao__titulo">Tabela da semana</h3>
         <div class="tabela-envolucro" id="tabela-estados"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao secao--alt" id="queimadas">
+    <header class="secao__cabecalho">
+      <div>
+        <p class="secao__rotulo">Meio ambiente</p>
+        <h2>Focos de queimada por estado</h2>
+        <p class="secao__lead">
+          Todo foco detectado pelo satélite de referência do INPE, agregado por estado e por
+          mês. É o insumo para comparar fumaça com internação respiratória — comparação que
+          só será publicada quando a série de saúde estiver coletada.
+        </p>
+      </div>
+      <div class="controles">
+        <label class="campo">
+          <span>Ano</span>
+          <select id="seletor-ano-queimadas">
+            <option value="2025">2025</option>
+            <option value="2024">2024</option>
+          </select>
+        </label>
+      </div>
+    </header>
+
+    <div class="kpis kpis--claro" id="kpis-queimadas" aria-label="Indicadores de queimadas"></div>
+
+    <div class="duas-colunas">
+      <div class="cartao">
+        <h3 class="cartao__titulo">Focos por estado</h3>
+        <div class="ranking" id="ranking-queimadas"></div>
+      </div>
+      <div class="cartao">
+        <h3 class="cartao__titulo">Distribuição no ano</h3>
+        <div class="meses" id="meses-queimadas"></div>
       </div>
     </div>
   </section>

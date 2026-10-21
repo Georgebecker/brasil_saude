@@ -43,7 +43,7 @@ def test_ministros_cobrem_o_periodo_de_2025_a_2026_sem_buraco():
 
 
 def test_pos_mandato_so_publica_o_que_foi_conferido():
-    """Afirmação sobre pessoa real exige fonte: o resto fica como não verificado."""
+    """Afirmação sobre pessoa real exige fonte e grau de confiança declarado."""
     registros = contexto.carregar_pos_mandato()
 
     assert "Eduardo Pazuello" in registros
@@ -52,11 +52,22 @@ def test_pos_mandato_so_publica_o_que_foi_conferido():
     assert pazuello["situacao"] == "cargo_eletivo"
     assert pazuello["url_fonte"].startswith("http")
 
-    pendentes = [item for item in registros.values() if not item["verificado"]]
-    assert pendentes, "o arquivo deve declarar o que ainda não foi conferido"
-    for item in pendentes:
-        assert item["situacao"] == "nao_verificado"
-        assert item["pendencias"], "pendência sem descrição não ajuda o próximo ciclo"
+    for nome, item in registros.items():
+        if item["verificado"]:
+            assert item["url_fonte"].startswith("http"), nome
+            assert item["confianca"] in {"alta", "media", "baixa"}, nome
+            assert item["resumo"].strip(), nome
+        else:
+            assert item["situacao"] == "nao_verificado", nome
+            assert item["pendencias"], f"{nome}: pendência sem descrição não ajuda o próximo ciclo"
+
+
+def test_pos_mandato_cobre_todos_os_ministros_da_linha_do_tempo():
+    """Ministro no histórico sem registro de destino deixa a tela incompleta."""
+    nomes_histórico = {item["nome"] for item in contexto.carregar()["ministros_saude"]}
+    registrados = set(contexto.carregar_pos_mandato())
+
+    assert nomes_histórico <= registrados
 
 
 def test_contexto_do_estado_escolhe_governador_e_ministro_da_data():

@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 
 from src.modelos import SerieUF, SituacaoUF
 from src.rotas.dependencias import obter_conexao
-from src.servicos import epidemiologia
+from src.servicos import agregacao, epidemiologia
 
 roteador = APIRouter(prefix="/api", tags=["epidemiologia"])
 
@@ -27,6 +27,14 @@ def _validar_uf(uf: str) -> str:
     if normalizada not in UF_VALIDAS:
         raise HTTPException(status_code=422, detail=f"UF inválida: {uf}")
     return normalizada
+
+
+def _ler_semana(valor: str | None) -> tuple[int, int] | None:
+    """Converte "2026-SE40" em (2026, 40); None quando não veio."""
+    if not valor:
+        return None
+    ano, semana = valor.upper().split("-SE")
+    return int(ano), int(semana)
 
 
 @roteador.get("/estados", response_model=list[SituacaoUF])
@@ -53,3 +61,31 @@ def alertas_do_estado(conexao: Conexao, uf: str) -> list[dict]:
     """Semanas em que o EARS sinalizou anomalia — para a lista lateral."""
     series = epidemiologia.serie_da_uf(conexao, _validar_uf(uf))
     return [ponto for ponto in series["semanas"] if ponto.get("anomalo")]
+
+
+@roteador.get("/estados/{uf}/agregado")
+def agregado_do_estado(
+    conexao: Conexao,
+    uf: str,
+    granularidade: str = Query("mes", pattern="^(semana|mes|trimestre|semestre|ano)$"),
+    de: str | None = Query(
+        None, pattern=r"^\d{4}-SE\d{1,2}$", description="Semana inicial, ex.: 2025-SE43"
+    ),
+    ate: str | None = Query(
+        None, pattern=r"^\d{4}-SE\d{1,2}$", description="Semana final, ex.: 2026-SE40"
+    ),
+) -> dict:
+    """Série recortada e agregada por mês, trimestre, semestre ou ano.
+
+    O recorte é feito em semanas epidemiológicas porque é essa a unidade em que
+    a fonte publica. Converter para data antes de recortar convidaria a erro de
+    fronteira (a semana que vira o ano).
+    """
+    sigla = _validar_uf(uf)
+    semanas = epidemiologia.series_por_uf(conexao).get(sigla, [])
+    janela = agregacao.recortar(
+        semanas,
+        de=_ler_semana(de),
+        ate=_ler_semana(ate),
+    )
+    return {"uf": sigla, **agregacao.resumo(janela, granularidade)}

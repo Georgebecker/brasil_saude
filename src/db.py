@@ -184,6 +184,17 @@ CREATE TABLE IF NOT EXISTS meta (
     valor  TEXT NOT NULL
 );
 
+-- Focos de queimada por UF e mês (INPE). Agregado, nunca o ponto individual:
+-- o painel compara com doença respiratória, não localiza o incêndio.
+CREATE TABLE IF NOT EXISTS queimada_uf_mes (
+    uf        TEXT NOT NULL REFERENCES uf(sigla),
+    ano       INTEGER NOT NULL CHECK (ano BETWEEN 2000 AND 2100),
+    mes       INTEGER NOT NULL CHECK (mes BETWEEN 1 AND 12),
+    focos     INTEGER NOT NULL CHECK (focos >= 0),
+    fonte_id  TEXT NOT NULL REFERENCES fonte(id),
+    PRIMARY KEY (uf, ano, mes, fonte_id)
+);
+
 -- Caixa de saída do protótipo de e-mail multi-tenant. Não guarda destinatário
 -- (dado pessoal) nem envia nada: registra o que seria enviado e para qual UF.
 CREATE TABLE IF NOT EXISTS email_outbox (

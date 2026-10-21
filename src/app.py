@@ -31,6 +31,8 @@ from src.rotas import (
     fontes,
     gestao,
     orcamento,
+    queimadas,
+    rede,
     responsaveis,
     subsidios,
 )
@@ -83,7 +85,7 @@ def create_app(caminho_banco: Path | None = None) -> FastAPI:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[origem.strip() for origem in origens if origem.strip()],
-        allow_methods=["GET"],
+        allow_methods=["GET", "POST"],
         allow_headers=["*"],
     )
     app.add_middleware(LimiteDeCorpoMiddleware)
@@ -96,6 +98,8 @@ def create_app(caminho_banco: Path | None = None) -> FastAPI:
         gestao.roteador,
         subsidios.roteador,
         contexto.roteador,
+        queimadas.roteador,
+        rede.roteador,
         fontes.roteador,
     ):
         app.include_router(roteador)

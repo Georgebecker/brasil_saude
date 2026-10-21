@@ -1,13 +1,34 @@
 {
-  "_nota": "Situação pós-mandato dos titulares do Ministério da Saúde. Cada linha declara o que foi conferido, quando e onde. O que não passou por conferência fica como 'nao_verificado' — o painel prefere dizer que não sabe a afirmar algo sobre uma pessoa real sem fonte.",
+  "_nota": "Situação pós-mandato dos titulares do Ministério da Saúde. Cada linha declara o que foi conferido, quando e onde. Nenhuma afirmação sobre pessoa real entra aqui sem URL de fonte; o que não passou por conferência fica como 'nao_verificado'.",
   "_validado_em": "2026-10-21",
-  "_metodo": "Pesquisa manual em fonte secundária (Wikipédia) e conferência cruzada no site do órgão quando possível. A fonte primária (Diário Oficial, Câmara, agência oficial) deve ser anexada em cada ciclo de revisão.",
+  "_metodo": "Pesquisa em profundidade em três camadas: (1) microdados oficiais do TSE (consulta_cand_2022, 2024 e 2026, delimitador ';', latin-1), lendo DS_CARGO, SG_PARTIDO, SG_UF e DS_SIT_TOT_TURNO; (2) API de dados abertos da Câmara dos Deputados para mandato em exercício; (3) página institucional (Fiocruz) e imprensa identificável para conselho de administração e função partidária. As fontes ficam salvas neste arquivo para consulta posterior.",
+  "_fontes_consultadas": [
+    {
+      "id": "tse_candidatos",
+      "nome": "Candidaturas e resultados eleitorais (microdados)",
+      "orgao": "Tribunal Superior Eleitoral",
+      "url": "https://dadosabertos.tse.jus.br/dataset/candidatos-2026"
+    },
+    {
+      "id": "camara_deputados_api",
+      "nome": "API de dados abertos da Câmara dos Deputados",
+      "orgao": "Câmara dos Deputados",
+      "url": "https://dadosabertos.camara.leg.br/api/v2/deputados/220611"
+    },
+    {
+      "id": "fiocruz",
+      "nome": "Pesquisadora Emérita da Fiocruz",
+      "orgao": "Fiocruz",
+      "url": "https://www.fiocruz.br"
+    }
+  ],
   "situacoes": {
     "em_exercicio": "Continua no cargo",
     "cargo_eletivo": "Passou a ocupar cargo eletivo",
     "setor_privado": "Retornou à atividade privada",
     "instituicao_publica": "Assumiu função em instituição pública",
     "aposentado": "Declarou aposentadoria ou afastamento da vida pública",
+    "outro": "Atuação pública sem cargo eletivo",
     "nao_verificado": "Situação ainda não conferida"
   },
   "registros": [
@@ -19,6 +40,7 @@
       "resumo": "Em exercício no cargo na data de referência do painel.",
       "verificado": true,
       "confianca": "alta",
+      "fonte_tipo": "institucional",
       "url_fonte": "https://www.gov.br/saude/pt-br/composicao",
       "verificado_em": "2026-10-21",
       "pendencias": []
@@ -27,30 +49,30 @@
       "nome": "Nísia Trindade",
       "cargo": "Ministra da Saúde",
       "periodo": "01/01/2023 a 10/03/2025",
-      "situacao": "nao_verificado",
-      "resumo": "Deixou o ministério em março de 2025. O destino institucional posterior ainda não foi conferido nesta curadoria; a hipótese mais citada na imprensa é o retorno à Fiocruz, mas ela não foi validada aqui.",
-      "verificado": false,
-      "confianca": "baixa",
-      "url_fonte": "https://www.gov.br/saude/pt-br/composicao",
+      "situacao": "cargo_eletivo",
+      "resumo": "Pesquisadora da Fiocruz desde 1987, recebeu em outubro de 2025 o título de Pesquisadora Emérita da instituição. Foi eleita deputada federal pelo PT do Rio de Janeiro em 4 de outubro de 2026, com 67.350 votos.",
+      "verificado": true,
+      "confianca": "alta",
+      "fonte_tipo": "TSE (microdados) + imprensa identificável",
+      "url_fonte": "https://www.metropoles.com/brasil/rio-elege-ex-ministros-da-saude-de-lula-e-bolsonaro-como-deputados-federais",
       "verificado_em": "2026-10-21",
       "pendencias": [
-        "confirmar vínculo atual na Fiocruz na página institucional",
-        "registrar portaria de exoneração no Diário Oficial"
+        "anexar página oficial do mandato na Câmara dos Deputados após a posse"
       ]
     },
     {
       "nome": "Marcelo Queiroga",
       "cargo": "Ministro da Saúde",
       "periodo": "23/03/2021 a 31/12/2022",
-      "situacao": "nao_verificado",
-      "resumo": "Médico cardiologista; deixou o cargo no fim do governo anterior. A atividade exercida depois disso ainda não foi conferida nesta curadoria.",
-      "verificado": false,
-      "confianca": "baixa",
-      "url_fonte": "https://www.gov.br/saude/pt-br/composicao",
+      "situacao": "outro",
+      "resumo": "Cardiologista, exercia a presidência estadual do PL na Paraíba e, em fevereiro de 2026, constava na folha do diretório nacional do PL como assessor especial. Foi candidato ao Senado pela Paraíba em 2026 e não foi eleito.",
+      "verificado": true,
+      "confianca": "alta",
+      "fonte_tipo": "TSE (microdados) + imprensa identificável",
+      "url_fonte": "https://www.metropoles.com/brasil/o-salario-de-r-30-mil-pago-pelo-pl-a-um-ex-ministro-de-bolsonaro",
       "verificado_em": "2026-10-21",
       "pendencias": [
-        "conferir registro profissional e vínculo empregatício atual",
-        "verificar eventual candidatura ou filiação partidária após 2022"
+        "confirmar situação partidária depois da eleição de 2026"
       ]
     },
     {
@@ -58,42 +80,42 @@
       "cargo": "Ministro da Saúde",
       "periodo": "16/05/2020 a 23/03/2021",
       "situacao": "cargo_eletivo",
-      "resumo": "General de divisão do Exército; passou a exercer mandato de deputado federal pelo Rio de Janeiro.",
+      "resumo": "Exerce mandato de deputado federal pelo PL do Rio de Janeiro desde 1º de fevereiro de 2023 e foi reeleito em 4 de outubro de 2026, com 146.148 votos.",
       "verificado": true,
       "confianca": "alta",
-      "url_fonte": "https://pt.wikipedia.org/wiki/Eduardo_Pazuello",
+      "fonte_tipo": "API oficial da Câmara + TSE (microdados)",
+      "url_fonte": "https://www.camara.leg.br/deputados/220611",
       "verificado_em": "2026-10-21",
-      "pendencias": [
-        "anexar página oficial do mandato na Câmara dos Deputados"
-      ]
+      "pendencias": []
     },
     {
       "nome": "Nelson Teich",
       "cargo": "Ministro da Saúde",
       "periodo": "17/04/2020 a 15/05/2020",
       "situacao": "setor_privado",
-      "resumo": "Médico oncologista; permaneceu 29 dias no cargo e retornou à atividade privada como consultor em saúde e empresário.",
+      "resumo": "Oncologista e consultor em saúde, assumiu em maio de 2025 uma cadeira no conselho de administração do Grupo Med4U, grupo de oncologia que inclui o Instituto de Oncologia do Paraná. Não foi localizado cargo público exercido por ele após a saída do ministério.",
       "verificado": true,
-      "confianca": "alta",
-      "url_fonte": "https://pt.wikipedia.org/wiki/Nelson_Teich",
+      "confianca": "media",
+      "fonte_tipo": "imprensa identificável",
+      "url_fonte": "https://www.bemparana.com.br/noticias/economia/ex-ministro-da-saude-assume-como-conselheiro-de-grupo-medico-especialista-em-tratamento-de-cancer/",
       "verificado_em": "2026-10-21",
       "pendencias": [
-        "anexar fonte primária da exoneração (Diário Oficial da União)"
+        "conferir a composição do conselho no site de relações com investidores do grupo"
       ]
     },
     {
       "nome": "Luiz Henrique Mandetta",
       "cargo": "Ministro da Saúde",
       "periodo": "01/01/2019 a 16/04/2020",
-      "situacao": "nao_verificado",
-      "resumo": "Médico ortopedista; deixou o cargo em abril de 2020. A trajetória posterior (atividade privada, ensino ou disputa eleitoral) não foi conferida nesta curadoria.",
-      "verificado": false,
-      "confianca": "baixa",
-      "url_fonte": "https://www.gov.br/saude/pt-br/composicao",
+      "situacao": "setor_privado",
+      "resumo": "Integra, desde janeiro de 2026, o conselho de administração da Alliança Saúde, companhia aberta de diagnóstico por imagem. Em 2022 foi candidato ao Senado por Mato Grosso do Sul (União Brasil) e não foi eleito.",
+      "verificado": true,
+      "confianca": "media",
+      "fonte_tipo": "imprensa identificável + TSE (microdados)",
+      "url_fonte": "https://veja.abril.com.br/coluna/radar-economico/mandetta-no-conselho-de-administracao-da-allianca-saude/",
       "verificado_em": "2026-10-21",
       "pendencias": [
-        "conferir filiação partidária e eventuais candidaturas após 2020",
-        "confirmar vínculo profissional atual"
+        "conferir o formulário de referência da companhia na CVM"
       ]
     }
   ]

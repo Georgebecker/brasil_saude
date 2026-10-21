@@ -415,6 +415,139 @@
     }
   }
 
+  // -------------------------------------------------- gráfico agregado
+
+  /** Barras por período (mês, trimestre, semestre ou ano) — sem linha de limite,
+   *  porque o limite do EARS só existe na semana. */
+  function desenharAgregado(periodos) {
+    const largura = 520;
+    const altura = 220;
+    const margem = { topo: 14, direita: 10, base: 34, esquerda: 46 };
+    const areaLargura = largura - margem.esquerda - margem.direita;
+    const areaAltura = altura - margem.topo - margem.base;
+
+    const maior = Math.max(1, ...periodos.map((periodo) => periodo.casos || 0)) * 1.08;
+    const passo = areaLargura / Math.max(1, periodos.length);
+    const centro = (indice) => margem.esquerda + passo * (indice + 0.5);
+    const y = (valor) => margem.topo + areaAltura - (valor / maior) * areaAltura;
+
+    const raiz = svg("svg", {
+      viewBox: `0 0 ${largura} ${altura}`,
+      class: "serie",
+      role: "img",
+      "aria-label": "Casos de dengue agregados no período escolhido",
+    });
+
+    for (let faixa = 0; faixa <= 3; faixa += 1) {
+      const valor = (maior / 3) * faixa;
+      raiz.append(
+        svg("line", {
+          x1: margem.esquerda,
+          x2: largura - margem.direita,
+          y1: y(valor),
+          y2: y(valor),
+          class: "eixo",
+        }),
+      );
+      const rotulo = svg("text", { x: 2, y: y(valor) + 3, class: "rotulo" });
+      rotulo.textContent = numero(Math.round(valor), maior > 999 ? fmtCompacto : fmtInteiro);
+      raiz.append(rotulo);
+    }
+
+    periodos.forEach((periodo, indice) => {
+      const alturaBarra = Math.max(2, y(0) - y(periodo.casos));
+      const barra = svg("rect", {
+        x: centro(indice) - passo * 0.32,
+        y: y(periodo.casos),
+        width: passo * 0.64,
+        height: alturaBarra,
+        rx: Math.min(3, passo * 0.2),
+        fill: CORES.linha,
+        opacity: 0.92,
+      });
+      barra.append(svg("title"));
+      barra.firstChild.textContent =
+        `${periodo.rotulo}: ${numero(periodo.casos)} casos · ` +
+        `${periodo.semanas_com_dado}/${periodo.semanas} semanas com dado`;
+      raiz.append(barra);
+    });
+
+    const passoRotulo = Math.max(1, Math.ceil(periodos.length / 7));
+    periodos.forEach((periodo, indice) => {
+      if (indice % passoRotulo !== 0 && indice !== periodos.length - 1) return;
+      const rotulo = svg("text", {
+        x: centro(indice),
+        y: altura - 16,
+        class: "rotulo",
+        "text-anchor": "middle",
+      });
+      rotulo.textContent = periodo.rotulo;
+      raiz.append(rotulo);
+    });
+
+    return raiz;
+  }
+
+  async function carregarAgregado() {
+    const uf = estado.ufSelecionada;
+    if (!uf) return;
+    const granularidade = document.getElementById("seletor-granularidade").value;
+    const de = document.getElementById("seletor-de").value;
+    const ate = document.getElementById("seletor-ate").value;
+    const destino = document.getElementById("grafico-agregado");
+    if (!destino) return;
+
+    destino.setAttribute("aria-busy", "true");
+    try {
+      const parametros = new URLSearchParams({ granularidade });
+      if (de) parametros.set("de", de);
+      if (ate) parametros.set("ate", ate);
+      const dados = await pedir(`/estados/${uf}/agregado?${parametros.toString()}`);
+
+      limpar(destino);
+      if (!dados.periodos.length) {
+        destino.append(el("p", "nota", "Nenhuma semana publicada nesse intervalo."));
+        return;
+      }
+      destino.append(desenharAgregado(dados.periodos));
+      destino.append(
+        el(
+          "p",
+          "nota",
+          `${dados.de} a ${dados.ate} · ${numero(dados.total)} casos em ` +
+            `${dados.semanas_com_dado} semanas com publicação · média de ` +
+            `${numero(dados.media_semanal, fmtDecimal)} casos por semana publicada`,
+        ),
+      );
+    } catch (erro) {
+      mostrarErro(destino, erro.message);
+    } finally {
+      destino.removeAttribute("aria-busy");
+    }
+  }
+
+  function preencherJanela(semanas) {
+    const de = document.getElementById("seletor-de");
+    const ate = document.getElementById("seletor-ate");
+    const valorEm = (ponto) => `${ponto.ano}-SE${String(ponto.semana).padStart(2, "0")}`;
+    const rotuloEm = (ponto) => `SE ${ponto.semana}/${ponto.ano}`;
+
+    limpar(de);
+    limpar(ate);
+    for (const ponto of semanas) {
+      const opcaoDe = el("option", null, rotuloEm(ponto));
+      opcaoDe.value = valorEm(ponto);
+      de.append(opcaoDe);
+      const opcaoAte = el("option", null, rotuloEm(ponto));
+      opcaoAte.value = valorEm(ponto);
+      ate.append(opcaoAte);
+    }
+    if (semanas.length) {
+      de.value = valorEm(semanas[0]);
+      ate.value = valorEm(semanas[semanas.length - 1]);
+    }
+  }
+
   // ------------------------------------------------------------ série SVG
 
   /**
@@ -641,6 +774,13 @@
             `barra clara = semana ainda em curso`,
         ),
       );
+
+      // O gráfico agregado vive na seção "Estados", fora deste painel, para não
+      // ser apagado a cada troca de estado.
+      const titulo = document.getElementById("agregado-uf");
+      if (titulo) titulo.textContent = situacao?.nome || uf;
+      preencherJanela(serie.semanas);
+      carregarAgregado();
 
       destino.append(el("h4", null, "Repasses federais (12 meses)"));
       if (repasses.disponivel) {
@@ -994,6 +1134,97 @@
     }
   }
 
+  // ------------------------------------------------------------ queimadas
+
+  async function carregarQueimadas() {
+    const destinoKpis = document.getElementById("kpis-queimadas");
+    const destinoRanking = document.getElementById("ranking-queimadas");
+    const destinoMeses = document.getElementById("meses-queimadas");
+    const ano = Number(document.getElementById("seletor-ano-queimadas").value);
+
+    try {
+      const dados = await pedir(`/queimadas?ano=${ano}`);
+      limpar(destinoKpis);
+      const pico = [...dados.meses].sort((a, b) => b.focos - a.focos)[0];
+      const primeiro = dados.ufs[0];
+      destinoKpis.append(
+        kpiClaro("Focos no ano", numero(dados.total), `${dados.ano} · satélite de referência`),
+        kpiClaro("Estado com mais focos", primeiro ? primeiro.uf : "—", primeiro ? `${numero(primeiro.focos)} focos` : ""),
+        kpiClaro("Mês de pico", pico ? pico.nome : "—", pico ? `${numero(pico.focos)} focos` : ""),
+        kpiClaro("Estados atingidos", numero(dados.ufs.length), "com pelo menos um foco"),
+      );
+
+      desenharRanking(
+        destinoRanking,
+        dados.ufs.slice(0, 12).map((linha) => ({ uf: linha.uf, valor: linha.focos, cor: "#d13b3b" })),
+        { aoClicar: selecionarEstado, formatarValor: (valor) => numero(valor) },
+      );
+
+      limpar(destinoMeses);
+      const maximo = Math.max(1, ...dados.meses.map((mes) => mes.focos));
+      for (const mes of dados.meses) {
+        const coluna = el("div", "mes");
+        const barra = el("div", "mes__coluna");
+        barra.style.height = `${Math.max(3, (mes.focos / maximo) * 90)}px`;
+        barra.title = `${mes.nome}: ${numero(mes.focos)} focos`;
+        coluna.append(
+          el("span", "mes__valor", numero(mes.focos, fmtCompacto)),
+          barra,
+          el("span", "mes__rotulo", mes.nome.slice(0, 3)),
+        );
+        destinoMeses.append(coluna);
+      }
+    } catch (erro) {
+      mostrarErro(destinoKpis, erro.message);
+      mostrarErro(destinoRanking, erro.message);
+    }
+  }
+
+  // ------------------------------------------------------- indicador de rede
+
+  async function carregarRede() {
+    const botao = document.getElementById("rede");
+    const texto = document.getElementById("rede-texto");
+    try {
+      const estadoRede = await pedir("/rede");
+      botao.classList.remove("rede--off");
+      botao.classList.add("rede--on");
+      texto.textContent = estadoRede.ip_local
+        ? `rede local · ${estadoRede.ip_local}:${estadoRede.porta}`
+        : "rede local · sem IPv4";
+      botao.title = estadoRede.endereco_rede
+        ? `Acesse do celular: ${estadoRede.endereco_rede} · clique para rearmar`
+        : "Sem endereço de rede local · clique para rearmar";
+    } catch (_) {
+      botao.classList.remove("rede--on");
+      botao.classList.add("rede--off");
+      texto.textContent = "rede local · fora do ar";
+      botao.title = "Servidor não respondeu. Clique para tentar de novo.";
+    }
+  }
+
+  async function rearmarRede() {
+    const botao = document.getElementById("rede");
+    const texto = document.getElementById("rede-texto");
+    texto.textContent = "rearmando…";
+    try {
+      const resposta = await fetch(`${API}/rede/rearmar`, { method: "POST" });
+      const dados = await resposta.json();
+      botao.classList.remove("rede--off");
+      botao.classList.add("rede--on");
+      texto.textContent = dados.ip_local
+        ? `rede local · ${dados.ip_local}:${dados.porta}`
+        : "rede local · sem IPv4";
+      botao.title = dados.mensagem;
+    } catch (_) {
+      botao.classList.remove("rede--on");
+      botao.classList.add("rede--off");
+      texto.textContent = "rede local · fora do ar";
+      botao.title =
+        "Sem resposta. No computador, rode: python scripts/vigia_rede.py";
+    }
+  }
+
   // ---------------------------------------------------------------- fontes
 
   // Logo oficial quando existe arquivo local; quando não existe, o nome do
@@ -1085,6 +1316,14 @@
       carregarSubsidios();
     });
 
+    document.getElementById("seletor-ano-queimadas").addEventListener("change", carregarQueimadas);
+    document.getElementById("rede").addEventListener("click", rearmarRede);
+    setInterval(carregarRede, 20000);
+
+    for (const id of ["seletor-granularidade", "seletor-de", "seletor-ate"]) {
+      document.getElementById(id).addEventListener("change", carregarAgregado);
+    }
+
     try {
       const malha = await fetch("/static/data/br_uf.geojson").then((resposta) => {
         if (!resposta.ok) throw new Error("malha do mapa não encontrada (rode a coleta do IBGE)");
@@ -1098,7 +1337,9 @@
     await Promise.all([
       carregarStatus(),
       carregarResumo(),
+      carregarRede(),
       carregarEstados(lerUfDaUrl()),
+      carregarQueimadas(),
       carregarSubsidios(),
       carregarContexto(),
       carregarFontes(),

@@ -113,6 +113,45 @@ img { max-width: 100%; }
 }
 .nav a:hover { background: rgb(255 255 255 / 10%); color: #fff; }
 
+/* ------------------------------------------------------- indicador de rede */
+
+.rede {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  margin-left: auto; padding: 0.35rem 0.7rem 0.35rem 0.5rem;
+  border-radius: 999px; border: 1px solid rgb(255 255 255 / 18%);
+  background: rgb(255 255 255 / 8%); color: #eaf1f9;
+  font: inherit; font-size: var(--texto-xs); cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease;
+  max-width: 100%;
+}
+.rede:hover { background: rgb(255 255 255 / 16%); }
+.rede__texto { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* O pulso: anel que cresce e some, como o monitor de batimento. */
+.rede__pulso {
+  position: relative; width: 10px; height: 10px; border-radius: 50%;
+  background: #9aa7b8; flex: none;
+}
+.rede--on .rede__pulso { background: #34d399; box-shadow: 0 0 0 0 rgb(52 211 153 / 70%); animation: pulso 1.8s infinite; }
+.rede--off .rede__pulso { background: #ef4444; box-shadow: 0 0 0 0 rgb(239 68 68 / 70%); animation: pulso 1.2s infinite; }
+.rede--off { border-color: rgb(239 68 68 / 55%); }
+
+@keyframes pulso {
+  0% { box-shadow: 0 0 0 0 rgb(52 211 153 / 60%); }
+  70% { box-shadow: 0 0 0 9px rgb(52 211 153 / 0%); }
+  100% { box-shadow: 0 0 0 0 rgb(52 211 153 / 0%); }
+}
+.rede--off .rede__pulso { animation-name: pulso-vermelho; }
+@keyframes pulso-vermelho {
+  0% { box-shadow: 0 0 0 0 rgb(239 68 68 / 65%); }
+  70% { box-shadow: 0 0 0 9px rgb(239 68 68 / 0%); }
+  100% { box-shadow: 0 0 0 0 rgb(239 68 68 / 0%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rede__pulso { animation: none !important; }
+}
+
 /* ------------------------------------------------------------------ hero */
 
 .hero {
@@ -497,6 +536,17 @@ td.numero, th.numero { text-align: right; font-variant-numeric: tabular-nums; }
 
 .legenda--partidos { margin-bottom: 0.2rem; }
 .legenda--partidos i { border-radius: 3px; }
+
+/* ----------------------------------------------------------- queimadas */
+
+.meses { display: grid; gap: 0.35rem; grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: end; }
+.mes { display: grid; gap: 0.25rem; justify-items: center; min-width: 0; }
+.mes__coluna {
+  width: 100%; min-height: 2px; border-radius: 6px 6px 2px 2px;
+  background: linear-gradient(180deg, #f08a4b, #d13b3b);
+}
+.mes__rotulo { font-size: 10px; color: var(--tinta-fraca); text-transform: uppercase; }
+.mes__valor { font-size: 10px; color: var(--marinho); font-weight: 700; font-variant-numeric: tabular-nums; }
 
 .timeline__pos {
   display: inline-block; margin-top: 0.3rem;

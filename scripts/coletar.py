@@ -27,7 +27,7 @@ if str(RAIZ) not in sys.path:
     sys.path.insert(0, str(RAIZ))
 
 from src import config, db  # noqa: E402
-from src.fontes import ibge, infodengue, inmet, responsaveis, transferegov, transparencia  # noqa: E402
+from src.fontes import ibge, infodengue, inmet, queimadas, responsaveis, transferegov, transparencia  # noqa: E402
 from src.rede import ClienteHTTP  # noqa: E402
 from src.servicos import epidemiologia  # noqa: E402
 
@@ -78,6 +78,11 @@ def etapa_subsidios(args: argparse.Namespace) -> dict:
     return transferegov.coletar(args.ano, caminho_banco=args.banco)
 
 
+def etapa_queimadas(args: argparse.Namespace) -> dict:
+    """Focos de queimada por UF e mês (INPE, dados abertos)."""
+    return queimadas.coletar(args.queimadas_anos, caminho_banco=args.banco)
+
+
 def etapa_ears(args: argparse.Namespace) -> dict:
     """Recalcula os alertas EARS a partir dos casos já gravados."""
     caminho = args.banco or db.caminho_banco()
@@ -96,12 +101,21 @@ ETAPAS = {
     "capitais": etapa_capitais,
     "orcamento": etapa_orcamento,
     "subsidios": etapa_subsidios,
+    "queimadas": etapa_queimadas,
     "clima": etapa_clima,
     "ears": etapa_ears,
 }
 
 ORDEM_COMPLETA = [
-    "base", "responsaveis", "dengue", "capitais", "orcamento", "subsidios", "clima", "ears"
+    "base",
+    "responsaveis",
+    "dengue",
+    "capitais",
+    "orcamento",
+    "subsidios",
+    "queimadas",
+    "clima",
+    "ears",
 ]
 
 
@@ -119,6 +133,13 @@ def main() -> int:
     parser.add_argument("etapa", choices=[*ORDEM_COMPLETA, "tudo"])
     parser.add_argument("--meses", type=int, default=12, help="janela de meses (orçamento)")
     parser.add_argument("--ano", type=int, default=2026, help="ano dos subsídios")
+    parser.add_argument(
+        "--queimadas-anos",
+        type=int,
+        nargs="+",
+        default=[2024, 2025],
+        help="anos de focos de queimada a baixar do INPE",
+    )
     parser.add_argument("--banco", type=Path, default=None, help="caminho do SQLite")
     parser.add_argument("--json", action="store_true", help="imprime só o JSON final")
     args = parser.parse_args()
